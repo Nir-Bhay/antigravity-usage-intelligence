@@ -116,7 +116,22 @@ async function resolvePythonPath() {
     }
   }
 
-  // Default platform candidates
+  // Default platform candidates — on Windows, try specific install locations first
+  if (process.platform === 'win32') {
+    const userProfile = process.env.USERPROFILE || process.env.HOMEDRIVE + process.env.HOMEPATH || 'C:\\Users\\Default';
+    const winCandidates = [
+      path.join(userProfile, 'AppData', 'Local', 'Programs', 'Python', 'Python312', 'python.exe'),
+      path.join(userProfile, 'AppData', 'Local', 'Programs', 'Python', 'Python311', 'python.exe'),
+      path.join(userProfile, 'AppData', 'Local', 'Programs', 'Python', 'Python310', 'python.exe'),
+      path.join(userProfile, 'AppData', 'Local', 'Programs', 'Python', 'Python39', 'python.exe'),
+      'C:\\Python312\\python.exe',
+      'C:\\Python311\\python.exe',
+      'C:\\Python310\\python.exe',
+    ];
+    for (const candidate of winCandidates) {
+      if (fs.existsSync(candidate)) return candidate;
+    }
+  }
   return process.platform === 'win32' ? 'python' : 'python3';
 }
 
@@ -440,14 +455,20 @@ function activate(context) {
   // 4. Register Rebuild Cache Command
   context.subscriptions.push(
     vscode.commands.registerCommand('antigravity-stats.rebuildCache', async () => {
-      try {
-        vscode.window.showInformationMessage('Rebuilding Antigravity stats database cache...');
-        const rebuildData = await fetchStatsData(['--force']);
-        if (statsProvider) statsProvider.pushStats(rebuildData);
-        vscode.window.showInformationMessage('Rebuild complete.');
-      } catch (err) {
-        vscode.window.showErrorMessage(`Antigravity Stats rebuild failed: ${err.message}`);
-      }
+      const progressOptions = { location: vscode.ProgressLocation.Notification, title: 'Rebuilding Antigravity stats...', cancellable: false };
+      vscode.window.withProgress(progressOptions, async () => {
+        try {
+          const rebuildData = await fetchStatsData(['--force']);
+          if (statsProvider) statsProvider.pushStats(rebuildData);
+          vscode.window.showInformationMessage('Antigravity Stats: cache rebuild complete.');
+        } catch (err) {
+          // Silently log to status bar tooltip instead of scary red popup
+          if (statusBarItem) {
+            statusBarItem.tooltip = `Antigravity Stats rebuild failed: ${err.message}. Click to open dashboard.`;
+          }
+          vscode.window.showWarningMessage(`Antigravity Stats: rebuild issue — ${err.message.slice(0, 120)}`);
+        }
+      });
     })
   );
 

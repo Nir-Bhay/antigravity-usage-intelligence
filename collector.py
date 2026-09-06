@@ -358,13 +358,17 @@ def parse_session_db(db_path, surface="IDE", brain_dir=None):
     
     start_ts = steps_data[0]["timestamp"] if steps_data else int(os.path.getmtime(db_path))
     end_ts = steps_data[-1]["timestamp"] if steps_data else start_ts
+    db_mtime = os.path.getmtime(db_path)
+    # Use the LATEST of (last step timestamp, db mtime) as the session's active date.
+    # This ensures sessions that span midnight always appear in the correct day's view.
+    last_active_ts = max(end_ts, int(db_mtime))
     
     return {
         "convo_id": convo_id,
-        "mtime": os.path.getmtime(db_path),
+        "mtime": db_mtime,
         "surface": surface,
         "created_at": datetime.fromtimestamp(start_ts).strftime('%Y-%m-%d %H:%M:%S'),
-        "date": datetime.fromtimestamp(start_ts).strftime('%Y-%m-%d'),
+        "date": datetime.fromtimestamp(last_active_ts).strftime('%Y-%m-%d'),
         "duration_sec": max(0, end_ts - start_ts),
         "model": model_name,
         "project": project_name,
@@ -411,11 +415,18 @@ def sync_all_sessions(force=False):
                 convo_id = os.path.splitext(os.path.basename(db_path))[0]
                 mtime = os.path.getmtime(db_path)
                 
-                # Check cache validity (re-parse if model name is from legacy/deprecated map)
+                # Check cache validity
+                # Re-parse if: mtime changed, model name is legacy/deprecated, OR
+                # the cached date doesn't match what the current mtime implies
+                # (catches sessions that were created on one day and are still active today)
                 cached_entry = cached_sessions.get(convo_id)
                 if cached_entry and cached_entry.get("mtime") == mtime and cached_entry.get("surface"):
                     old_m = cached_entry.get("model", "")
-                    if not any(dep in old_m for dep in ["1.5", "2.5", "ID:", "Thinking Exp", "Flash 8B"]):
+                    if any(dep in old_m for dep in ["1.5", "2.5", "ID:", "Thinking Exp", "Flash 8B"]):
+                        pass  # re-parse for model name fix
+                    elif cached_entry.get("date") != datetime.fromtimestamp(mtime).strftime('%Y-%m-%d'):
+                        pass  # re-parse: session crossed midnight since last cache write
+                    else:
                         continue
                     
                 # Parse database

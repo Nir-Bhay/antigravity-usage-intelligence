@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.2] - 2026-09-07
+
+### Fixed
+* **Cross-Midnight Session Date Bug**: Sessions started before midnight now correctly appear in the next day's "Today" view. The session date is now derived from the latest of (last step timestamp, DB file mtime) rather than the session creation timestamp — so long-running sessions that span midnight show up in today's filter, not yesterday's.
+* **Windows Python Discovery**: `resolvePythonPath` now probes the most common concrete Python 3 install paths on Windows (`%USERPROFILE%\AppData\Local\Programs\Python\Python312\`) before falling back to the generic `python` launcher. Eliminates the Windows Store app stub conflict that caused rebuild failures for some users.
+* **Incremental Cache Invalidation**: Added a cross-midnight check in the incremental sync loop — sessions whose cached `date` no longer matches the DB file's `mtime` date are automatically re-parsed on next refresh.
+
+### Improved
+* **Rebuild Command UX**: Replaced the red error popup on rebuild failure with a softer warning notification. Errors are also reflected in the status bar tooltip so users always have context without interruption.
+* **Progress Indicator**: The Rebuild Cache command now shows a native VS Code progress notification instead of a static info message.
+
+---
+
 ## [1.0.1] - 2026-09-07
 
 ### Added
