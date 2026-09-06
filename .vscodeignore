@@ -2,6 +2,7 @@
 .git/**
 .gitignore
 .gitattributes
+.github/**
 
 # IDE & Editor configs
 .vscode/**
@@ -54,7 +55,7 @@ desktop.ini
 !README.md
 !CHANGELOG.md
 !LICENSE
-!LICENSE.txt
 !assets/icon.png
 !assets/icon.svg
 !src/ui/dashboard.html
+!src/quota_detector.js

@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.1] - 2026-09-07
+
+### Added
+* **Live Quota Alerts**: Configurable warnings (`antigravity-stats.quotaAlerts` & `antigravity-stats.quotaAlertThresholds`) when live Antigravity quota crosses thresholds (75%, 90%, 100%).
+* **Deterministic Demo Mode**: Added `antigravity-stats.demoMode` and `--demo` CLI flag to generate sample telemetry for screenshots and test evaluations without reading local databases.
+* **Silent 30s Webview Auto-Refresh**: Dynamic refresh without flickering loading spinners, plus refresh-on-focus when the dashboard tab becomes visible.
+* **Live Quota Countdown Ticker**: Second-by-second countdown to the next language server quota reset.
+* **Marketplace Compliance & Privacy Documentation**: Full `PRIVACY.md` detailing read-only loopback RPC and offline SQLite guarantees; updated `README.md` compliance notes.
+
+### Improved
+* **Multi-Platform Process Scanner**: Linux (`pgrep -fa`) and macOS candidate detection alongside Windows `Get-CimInstance` in `quota_detector.js`.
+* **Bounded Parallel Probing**: Parallelized Connect-RPC candidate port probes with `Promise.allSettled` to prevent worst-case probe delays.
+* **Session Recency Classification**: Separated real-time active sessions (< 2m) from recent sessions (< 15m).
+* **Cross-Platform Test Scripts**: Enhanced `package.json` test runner to support Windows `py -3` alongside `python3` and `python`.
+
+---
+
 ## [1.0.0] - 2026-09-06
 
 ### Added

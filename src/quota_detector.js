@@ -61,65 +61,120 @@ function queryStatus(port, csrfToken, protocol) {
   });
 }
 
-async function scanForLanguageServer() {
-  const psCmd = process.platform === 'win32'
-    ? 'powershell -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $_.Name -like \'*language_server*\' -and $_.CommandLine -like \'*--csrf_token*\' } | Select-Object ProcessId, CommandLine | ConvertTo-Json -Compress"'
-    : 'pgrep -fl language_server';
-
-  const { stdout } = await execCommand(psCmd);
-  if (!stdout) return null;
-
-  let candidates = [];
-  try {
-    const parsed = JSON.parse(stdout);
-    candidates = Array.isArray(parsed) ? parsed : [parsed];
-  } catch (e) {
-    return null;
+async function listServerCandidates() {
+  if (process.platform === 'win32') {
+    const psCmd = 'powershell -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $_.Name -like \'*language_server*\' -and $_.CommandLine -like \'*--csrf_token*\' } | Select-Object ProcessId, CommandLine | ConvertTo-Json -Compress"';
+    const { stdout } = await execCommand(psCmd);
+    if (!stdout) return [];
+    try {
+      const parsed = JSON.parse(stdout);
+      const arr = Array.isArray(parsed) ? parsed : [parsed];
+      return arr
+        .filter((c) => c && c.ProcessId && c.CommandLine)
+        .map((c) => ({ pid: c.ProcessId, cmd: c.CommandLine }));
+    } catch (e) {
+      return [];
+    }
   }
 
+  // macOS / Linux: pgrep prints "<pid> <full command line>" as plain text,
+  // so parse lines instead of expecting JSON.
+  const { stdout } = await execCommand('pgrep -fa language_server');
+  if (!stdout) return [];
+  const out = [];
+  for (const line of stdout.split('\n')) {
+    const m = line.match(/^\s*(\d+)\s+(.*)$/);
+    if (m && m[2].includes('--csrf_token')) {
+      out.push({ pid: parseInt(m[1], 10), cmd: m[2] });
+    }
+  }
+  return out;
+}
+
+async function listListeningPorts(pid) {
+  const ports = new Set();
+  try {
+    if (process.platform === 'win32') {
+      const netCmd = `netstat -ano | findstr "LISTENING" | findstr " ${pid}"`;
+      const { stdout: netOut } = await execCommand(netCmd);
+      if (netOut) {
+        for (const line of netOut.split('\n')) {
+          const m = line.trim().match(/:(\d+)\s+.*LISTENING/);
+          if (m) ports.add(parseInt(m[1], 10));
+        }
+      }
+    } else if (process.platform === 'linux') {
+      const { stdout } = await execCommand(`ss -ltnp 2>/dev/null | grep "pid=${pid},"`);
+      if (stdout) {
+        for (const line of stdout.split('\n')) {
+          const m = line.match(/:(\d+)\s/);
+          if (m) ports.add(parseInt(m[1], 10));
+        }
+      }
+    } else {
+      // macOS: lsof is best-effort (may not exist -> ignored below).
+      const { stdout } = await execCommand(`lsof -aPn -iTCP -sTCP:LISTEN -p ${pid} 2>/dev/null`);
+      if (stdout) {
+        for (const line of stdout.split('\n')) {
+          const m = line.match(/:(\d+)\s+\(LISTEN\)/);
+          if (m) ports.add(parseInt(m[1], 10));
+        }
+      }
+    }
+  } catch (e) {
+    // Best-effort only; extension_port offsets below still apply.
+  }
+  return ports;
+}
+
+async function scanForLanguageServer() {
+  const candidates = await listServerCandidates();
+
   for (const cand of candidates) {
-    const cmd = cand.CommandLine || '';
-    const pid = cand.ProcessId;
+    const cmd = cand.cmd || '';
+    const pid = cand.pid;
     if (!pid || !cmd) continue;
 
-    const tokenMatch = cmd.match(/--csrf_token\s+([a-zA-Z0-9\-_.]+)/);
-    const extPortMatch = cmd.match(/--extension_server_port\s+(\d+)/);
+    const tokenMatch = cmd.match(/--csrf_token[=\s]+([A-Za-z0-9\-_.=+/]+)/);
+    const extPortMatch = cmd.match(/--extension_server_port[=\s]+(\d+)/);
     if (!tokenMatch) continue;
 
     const csrfToken = tokenMatch[1];
     const extPort = extPortMatch ? parseInt(extPortMatch[1], 10) : 0;
 
-    // Find listening ports for this PID
-    const netCmd = `netstat -ano | findstr "LISTENING" | findstr " ${pid}"`;
-    const { stdout: netOut } = await execCommand(netCmd);
-
     const ports = new Set();
     if (extPort > 0) {
-      ports.add(extPort + 2);
-      ports.add(extPort + 1);
       ports.add(extPort);
+      ports.add(extPort + 1);
+      ports.add(extPort + 2);
     }
+    for (const p of await listListeningPorts(pid)) ports.add(p);
 
-    if (netOut) {
-      const lines = netOut.split('\n');
-      for (const line of lines) {
-        const m = line.trim().match(/:(\d+)\s+.*LISTENING/);
-        if (m) ports.add(parseInt(m[1], 10));
+    // Bound worst-case probe time: cap ports, probe all in parallel,
+    // return the first endpoint that answers with a userStatus.
+    const portList = [...ports].filter((p) => p > 0 && p < 65536).slice(0, 25);
+    const probes = [];
+    for (const port of portList) {
+      for (const proto of ['https', 'http']) {
+        probes.push(
+          queryStatus(port, csrfToken, proto)
+            .then((status) => ({ port, protocol: proto, status }))
+            .catch(() => ({ port, protocol: proto, status: null }))
+        );
       }
     }
-
-    for (const port of ports) {
-      for (const proto of ['https', 'http']) {
-        const status = await queryStatus(port, csrfToken, proto);
-        if (status && status.userStatus) {
-          return {
-            port,
-            protocol: proto,
-            csrfToken,
-            pid,
-            rawStatus: status.userStatus,
-          };
-        }
+    const settled = await Promise.allSettled(probes);
+    for (const r of settled) {
+      if (r.status !== 'fulfilled') continue;
+      const { port, protocol, status } = r.value;
+      if (status && status.userStatus) {
+        return {
+          port,
+          protocol,
+          csrfToken,
+          pid,
+          rawStatus: status.userStatus,
+        };
       }
     }
   }
@@ -147,6 +202,8 @@ function parseQuotaFromStatus(status) {
 
   const result = {
     is_live: true,
+    stale: false,
+    fetched_at: Date.now(),
     user_name: status.name || 'User',
     user_email: status.email || '',
     tier_name: status.userTier?.name || 'Google AI Pro',
@@ -206,7 +263,13 @@ async function getLiveQuota(forceRefresh = false) {
     // Graceful fallback
   }
 
-  return cachedQuota;
+  // Scan failed: serve last-known data explicitly marked stale
+  // so the dashboard never mistakes it for a fresh reading.
+  if (cachedQuota) {
+    cachedQuota.stale = true;
+    return cachedQuota;
+  }
+  return null;
 }
 
 module.exports = {

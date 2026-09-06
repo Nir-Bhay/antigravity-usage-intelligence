@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>The definitive token telemetry, context cache efficiency, and agent forensics engine for Google Antigravity & AI Coding Assistants.</strong>
+  <strong>Token usage tracker, prompt cache analytics, live quota monitor, and agent session forensics for Google Antigravity AI coding agents.</strong>
 </p>
 
 <p align="center">
@@ -14,8 +14,12 @@
   <a href="https://open-vsx.org/extension/nirbhay-hiwse/antigravity-usage-intelligence"><img src="https://img.shields.io/badge/Open%20VSX-v1.0.0-9C27B0?style=flat-square&logo=eclipse-ide&logoColor=white" alt="Open VSX" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License: MIT" /></a>
   <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue?style=flat-square" alt="Platform" />
-  <img src="https://img.shields.io/badge/Privacy-100%25%20Offline%20%7C%20Zero%20Telemetry-10b981?style=flat-square" alt="100% Offline" />
-  <img src="https://img.shields.io/badge/Prompt%20Cache%20Efficiency-90.2%25-success?style=flat-square" alt="Cache Hit Rate" />
+  <img src="https://img.shields.io/badge/Privacy-No%20Internet%20%7C%20Local%20Only-10b981?style=flat-square" alt="Local only" />
+  <img src="https://img.shields.io/badge/Prompt%20Cache%20Insights-success?style=flat-square" alt="Cache Insights" />
+</p>
+
+<p align="center">
+  <em>Unofficial, community-built extension. Not affiliated with or endorsed by Google. Local-only: no internet access.</em>
 </p>
 
 ---
@@ -106,7 +110,7 @@ flowchart TD
 
 ## 🔒 Privacy & Security First
 
-- **100% Offline & Private**: Zero outbound internet calls. No telemetry beacons, no external analytics, no cloud data harvesting.
+- **100% Offline & Private**: Zero outbound internet calls (the only network use is a local Antigravity connection over the 127.0.0.1 loopback). No telemetry beacons, no external analytics, no cloud data harvesting.
 - **Non-Contention Database Access**: Opened using `?mode=ro&immutable=1` and `PRAGMA query_only = ON`. Will never lock or corrupt active pair-programming sessions.
 - **Safe Local RPC**: Connects exclusively to `127.0.0.1` using the session's internal CSRF token.
 - **Zero Third-Party Python Dependencies**: Runs out-of-the-box using the standard Python library (`sqlite3`, `json`, `os`, `sys`).
@@ -163,6 +167,8 @@ Open Settings (`Ctrl+,` or `Cmd+,`) and search for `antigravity-stats`:
 | `antigravity-stats.showStatusBar` | `boolean` | `true` | Show today's token counter in the IDE status bar. |
 | `antigravity-stats.autoRefreshMinutes` | `number` | `3` | Background polling interval in minutes to keep status bar fresh. |
 | `antigravity-stats.defaultRange` | `string` | `"today"` | Default time range loaded when opening dashboard (`today`, `yesterday`, `7d`, `30d`, `90d`, `180d`, `all`). |
+| `antigravity-stats.quotaAlerts` | `boolean` | `true` | Warn when live Antigravity quota crosses a threshold. Fires on live server data only, never on estimates. |
+| `antigravity-stats.quotaAlertThresholds` | `number[]` | `[75, 90, 100]` | Usage percentages that trigger a quota warning per model family. Each level fires once until usage drops 5 points below it. |
 
 ---
 
@@ -185,6 +191,37 @@ python collector.py --json
 # Package VSIX for distribution
 npx @vscode/vsce package --no-git-tag-version
 ```
+
+---
+
+## ✅ Marketplace Review & Compliance Notes
+
+For reviewers and security-conscious users — exactly what this extension does and does not do:
+
+**Permissions & capabilities**
+- No special VS Code permissions: no authentication providers, no secrets storage, no terminal
+  access, no file-system watcher. Commands: open dashboard, refresh, rebuild cache, export report.
+- No dependencies at runtime: `extension.js` (Node built-ins only), `collector.py`
+  (Python standard library only), one static HTML dashboard.
+
+**Network use**
+| Destination | Purpose | Data sent |
+| :--- | :--- | :--- |
+| `127.0.0.1` (loopback only) | Live quota query to the local Antigravity language server | `{}` probe + CSRF header; receives quota fractions |
+| Internet | — | Nothing. No `fetch`, no telemetry, no update checks |
+
+**Filesystem access (read-only)**
+| Path | Mode | Purpose |
+| :--- | :--- | :--- |
+| `~/.gemini/antigravity*/conversations/*.db` | SQLite `?mode=ro` + `query_only = ON` (never locks writers) | Token counts per session |
+| `~/.gemini/antigravity*/brain/*/transcript.jsonl` | Plain read | Tool names + error counts |
+| `~/.gemini/antigravity/antigravity_stats_cache.json` | Local read/write | Derived-stats cache (delete anytime) |
+
+**How to verify (2 minutes)**
+1. Install from VSIX on a clean profile with networking disabled — every feature works offline.
+2. Open DevTools → Network while refreshing: zero non-loopback requests.
+3. Run an Antigravity agent task mid-scan: no database lock errors; numbers update on next refresh.
+4. Full policy: [PRIVACY.md](PRIVACY.md) · [SECURITY.md](SECURITY.md)
 
 ---
 

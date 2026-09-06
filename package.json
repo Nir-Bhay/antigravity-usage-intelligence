@@ -1,8 +1,8 @@
 {
   "name": "antigravity-usage-intelligence",
   "displayName": "Antigravity Usage Intelligence",
-  "description": "Real-time token counter, Gemini prompt cache savings, and analytics dashboard for Google Antigravity AI coding agents. 100% local & private.",
-  "version": "1.0.0",
+  "description": "Token usage analytics, prompt-cache savings, live quota monitor and agent session forensics for Antigravity AI coding agents. Unofficial, local-only, no internet.",
+  "version": "1.0.1",
   "publisher": "nirbhay-hiwse",
   "author": {
     "name": "Nirbhay Hiwse",
@@ -55,6 +55,12 @@
     "developer-productivity",
     "thinking-tokens",
     "token-usage",
+    "usage-tracker",
+    "quota-monitor",
+    "quota-tracker",
+    "session-analytics",
+    "ai-usage",
+    "llm-observability",
     "dashboard",
     "activity-heatmap",
     "observability",
@@ -108,6 +114,21 @@
           "type": "string",
           "default": "",
           "description": "Explicit path to Python executable (e.g. C:\\\\Python311\\\\python.exe or /usr/bin/python3). Leave empty for auto-detection."
+        },
+        "antigravity-stats.quotaAlerts": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a warning notification when live Antigravity quota crosses a threshold. Only fires on live server data, never on estimates."
+        },
+        "antigravity-stats.quotaAlertThresholds": {
+          "type": "array",
+          "default": [75, 90, 100],
+          "description": "Quota usage percentages that trigger a warning notification (per model family). Each level fires once until usage drops 5 points below it."
+        },
+        "antigravity-stats.demoMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show deterministic sample data instead of real databases (for screenshots, UI testing, first look). No real data is read while enabled."
         }
       }
     },
@@ -180,7 +201,7 @@
   },
   "homepage": "https://github.com/Nir-Bhay/antigravity-usage-intelligence#readme",
   "scripts": {
-    "test": "node -c extension.js && python -m py_compile collector.py",
+    "test": "node -c extension.js && node -c src/quota_detector.js && (python3 -m py_compile collector.py || python -m py_compile collector.py || py -3 -m py_compile collector.py)",
     "vscode:prepublish": "npm run test",
     "package": "vsce package",
     "publish:marketplace": "vsce publish",

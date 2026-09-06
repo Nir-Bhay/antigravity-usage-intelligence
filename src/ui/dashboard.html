@@ -140,6 +140,11 @@
       border-color: rgba(255, 255, 255, 0.2);
     }
 
+    button:focus-visible, .filter-btn:focus-visible, .model-pill:focus-visible, .q-pill:focus-visible {
+      outline: 2px solid #38bdf8;
+      outline-offset: 2px;
+    }
+
     button.primary {
       background: rgba(56, 189, 248, 0.15);
       color: var(--accent-blue);
@@ -237,6 +242,7 @@
       border-radius: 4px;
       font-size: 11px;
       outline: none;
+      color-scheme: dark;
     }
 
     /* Next-Level Dual Model Quota & Capacity Card (Compact & High-Density) */
@@ -279,9 +285,9 @@
     }
 
     .quota-bolt-icon {
-      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
       color: #fbbf24;
-      filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.5));
     }
 
     .quota-heading {
@@ -431,7 +437,7 @@
     }
 
     .quota-ring-lbl {
-      font-size: 7px;
+      font-size: 8.5px;
       color: var(--text-muted);
       font-weight: 700;
       letter-spacing: 0.5px;
@@ -762,7 +768,7 @@
     .surface-badge {
       display: inline-block;
       padding: 1px 5px;
-      border-radius: 3px;
+      border-radius: 4px;
       font-size: 9px;
       font-weight: 600;
       text-transform: uppercase;
@@ -785,6 +791,19 @@
       background: rgba(34, 197, 94, 0.15);
       color: #4ade80;
       border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .badge-recent {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(245, 158, 11, 0.12);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 9px;
+      font-weight: 600;
     }
 
     .badge-active-live {
@@ -812,7 +831,7 @@
     .kpi-card {
       background: linear-gradient(145deg, rgba(30, 41, 59, 0.45) 0%, rgba(15, 23, 42, 0.6) 100%);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 7px;
+      border-radius: 8px;
       padding: 6px 9px;
       position: relative;
       display: flex;
@@ -1035,6 +1054,39 @@
       border: 1px solid rgba(56, 189, 248, 0.4);
     }
 
+    .heat-toggle-group {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .heat-toggle-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .heat-toggle-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .heat-toggle-btn.active {
+      background: rgba(56, 189, 248, 0.18);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+
     .bars-chart-wrapper {
       position: relative;
       width: 100%;
@@ -1161,7 +1213,7 @@
     }
 
     .bar-date.is-dot {
-      color: rgba(255, 255, 255, 0.2);
+      color: rgba(255, 255, 255, 0.35);
       font-size: 11px;
     }
 
@@ -1290,7 +1342,7 @@
     }
 
     .hour-label.is-dot {
-      color: rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.35);
       font-size: 10px;
     }
 
@@ -1996,7 +2048,7 @@
     .drawer-section-card {
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
+      border-radius: 8px;
       padding: 14px;
       display: flex;
       flex-direction: column;
@@ -2342,9 +2394,9 @@
     <div class="brand-section">
       <div class="brand">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-          <circle cx="18" cy="19" r="2" fill="currentColor"></circle>
-          <circle cx="6" cy="11" r="2" fill="currentColor"></circle>
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
         </svg>
         <h1>Antigravity Usage Intelligence</h1>
         <span class="badge-live"><span class="pulse"></span> Live</span>
@@ -2412,7 +2464,7 @@
     <!-- Top Bar: Title, Active Status, Countdown Timer -->
     <div class="quota-top-bar">
       <div class="quota-title-wrap">
-        <span class="quota-bolt-icon">⚡</span>
+        <span class="quota-bolt-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
         <div>
           <div class="quota-heading">
             <span>Rolling 5-Hour Model Quota Window</span>
@@ -2509,6 +2561,11 @@
   </div>
 
   <!-- Hero KPI Cards (Refined Glassmorphic 7-Card Balanced Grid) -->
+  <div style="font-size:10px; color:var(--text-muted); margin:-4px 2px 8px; display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+    <span id="data-freshness-note" title="Token counts come straight from Antigravity's local session databases">Tokens: exact local counts</span>
+    <span style="opacity:0.4;">·</span>
+    <span title="Quota bars estimate a rolling 5-hour window from local activity — not provider billing">Quota bars: local estimate, not a bill</span>
+  </div>
   <div class="kpi-grid">
     <!-- Hero Card: Total Tokens (Spans 2 columns) -->
     <div class="kpi-card kpi-card-hero" id="card-total-tokens">
@@ -2640,7 +2697,7 @@
           <button class="trend-toggle-btn" id="btn-trend-all" type="button">All Time</button>
         </div>
         <div class="legend">
-          <div class="legend-item"><div class="legend-color" style="background:#60a5fa;"></div> Input</div>
+          <div class="legend-item"><div class="legend-color" style="background:#38bdf8;"></div> Input</div>
           <div class="legend-item"><div class="legend-color" style="background:#a855f7;"></div> Cached</div>
           <div class="legend-item"><div class="legend-color" style="background:#22c55e;"></div> Output</div>
           <div class="legend-item"><div class="legend-color" style="background:#f59e0b;"></div> Thinking</div>
@@ -3137,6 +3194,22 @@
     function renderUI(data) {
       currentData = data;
       const s = data.summary;
+
+      // First-run onboarding: guide users with zero sessions instead of bare zeros
+      let onboard = document.getElementById('onboard-banner');
+      if (s.total_sessions === 0) {
+        if (!onboard) {
+          onboard = document.createElement('div');
+          onboard.id = 'onboard-banner';
+          onboard.style = 'background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.3); border-radius:8px; padding:10px 14px; margin-bottom:10px; font-size:12px; color:#bae6fd; line-height:1.5;';
+          const fb = document.querySelector('.filter-bar');
+          if (fb && fb.parentNode) fb.parentNode.insertBefore(onboard, fb);
+        }
+        onboard.innerHTML = '<strong>No Antigravity sessions found yet.</strong><br>Use Antigravity for a task, then press Refresh. This extension reads local session databases at <span class="mono">~/.gemini/antigravity*/conversations</span> — nothing leaves your machine.';
+        onboard.style.display = 'block';
+      } else if (onboard) {
+        onboard.style.display = 'none';
+      }
       const c = data.costs || { est_spend: 0, dollars_saved: 0, savings_pct: 0 };
       const st = data.streaks || { current_streak: 0, longest_streak: 0, active_days: 0 };
 
@@ -3147,7 +3220,10 @@
 
       // KPIs (Refined 7 Cards)
       const elTotal = document.getElementById('val-total-tokens');
-      if (elTotal) elTotal.textContent = formatNumber(s.total_tokens);
+      if (elTotal) {
+        elTotal.textContent = formatNumber(s.total_tokens);
+        elTotal.title = 'Exact: ' + (s.total_tokens || 0).toLocaleString() + ' tokens';
+      }
       const elTurns = document.getElementById('val-total-turns');
       if (elTurns) elTurns.textContent = s.total_turns.toLocaleString();
       const elInput = document.getElementById('val-input-tokens');
@@ -3163,7 +3239,11 @@
       const elToolCalls = document.getElementById('val-tool-calls');
       if (elToolCalls) elToolCalls.textContent = s.total_tool_calls.toLocaleString();
       const elToolSub = document.getElementById('val-tool-sub');
-      if (elToolSub) elToolSub.textContent = s.total_tool_calls.toLocaleString() + ' tool executions';
+      if (elToolSub) {
+        elToolSub.textContent = s.total_tool_calls > 0
+          ? s.total_tool_calls.toLocaleString() + ' tool executions · ' + s.tool_success_rate_pct + '% success'
+          : 'No tool calls in range';
+      }
 
       // Dual Model Quota & Rolling 5-Hour Window
       updateQuotaCard(data.quota || {}, data.live_quota || null);
@@ -3217,6 +3297,9 @@
       // Render Tools
       const toolsContainer = document.getElementById('tools-container');
       toolsContainer.innerHTML = '';
+      if (!(data.top_tools || []).length) {
+        toolsContainer.innerHTML = '<div style="color:var(--text-muted); font-size:11px; padding:6px 2px;">No tool calls in this range.</div>';
+      }
       (data.top_tools || []).forEach(t => {
         const item = document.createElement('div');
         item.style = 'background:rgba(255,255,255,0.04); border:1px solid var(--border-color); padding:4px 10px; border-radius:6px; font-size:11px; display:inline-flex; align-items:center; gap:6px;';
@@ -3240,6 +3323,11 @@
           statusEl.style.background = 'rgba(16, 185, 129, 0.15)';
           statusEl.style.borderColor = 'rgba(16, 185, 129, 0.4)';
           statusEl.style.color = '#34d399';
+          if (liveQuota.stale) {
+            statusEl.innerHTML += ' · Stale';
+            statusEl.style.opacity = '0.75';
+            statusEl.title = 'Last known quota — live refresh failed. Showing cached reading.';
+          }
         }
 
         if (summaryEl) {
@@ -3248,6 +3336,7 @@
 
         if (timerEl) {
           const resetIso = liveQuota.gemini?.reset_time || liveQuota.claude?.reset_time;
+          window.__quotaResetIso = resetIso || null;
           if (resetIso) {
             const resetDate = new Date(resetIso);
             const diffMs = resetDate.getTime() - Date.now();
@@ -3759,7 +3848,11 @@
       const peakStr = (peakHour % 12 === 0 ? 12 : peakHour % 12) + (peakHour >= 12 ? ':00 PM' : ':00 AM');
       const badgeEl = document.getElementById('hourly-highlight-label');
       if (badgeEl) {
-        badgeEl.innerHTML = `<span>🔥</span> <span>Peak: ${peakStr} (${peakCount} sessions)</span>`;
+        if (peakCount > 0) {
+          badgeEl.innerHTML = `<span>🔥</span> <span>Peak: ${peakStr} (${peakCount} sessions)</span>`;
+        } else {
+          badgeEl.innerHTML = `<span>No hourly activity yet</span>`;
+        }
       }
     }
 
@@ -4303,7 +4396,7 @@
             <span class="mono" style="background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; font-size:11px;">${escapeHtml(s.project || 'General')}</span>
           </td>
           <td class="session-title-cell" title="${escapeHtml(s.title || 'Session ' + shortId)}">
-            ${s.is_active ? '<span class="badge-active-live"><span class="pulse"></span> Active</span>' : ''}
+            ${s.is_active ? '<span class="badge-active-live"><span class="pulse"></span> Active</span>' : (s.is_recent ? '<span class="badge-recent">Recent</span>' : '')}
             ${escapeHtml(s.title || 'Agent Session')}
             <button class="btn-copy" data-id="${escapeHtml(s.convo_id)}" title="Copy Conversation ID">📋</button>
           </td>
@@ -4313,7 +4406,7 @@
           <td class="col-hide-narrow mono" style="color:#60a5fa;">${formatNumber(s.input_tokens)}</td>
           <td class="col-hide-narrow mono" style="color:#a855f7;">${formatNumber(s.cached_tokens)}</td>
           <td class="col-hide-narrow mono" style="color:#22c55e;">${formatNumber(s.output_tokens)}</td>
-          <td class="mono" style="font-weight:600; color:var(--accent-blue);">${formatNumber(s.total_tokens)}</td>
+          <td class="mono" style="font-weight:600; color:var(--accent-blue);" title="Exact total tokens">${formatNumber(s.total_tokens)}</td>
         `;
 
         tr.addEventListener('click', (e) => {
@@ -4638,6 +4731,9 @@
     // Drawer Event Listeners
     document.getElementById('drawer-close').addEventListener('click', closeSessionDrawer);
     document.getElementById('drawer-backdrop').addEventListener('click', closeSessionDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeSessionDrawer();
+    });
 
     document.getElementById('d-btn-copy-id').addEventListener('click', () => {
       if (selectedSession && selectedSession.convo_id) {
@@ -4694,6 +4790,8 @@
         showLoading(false);
         document.getElementById('error-banner').style.display = 'none';
         renderUI(message.data);
+        const freshnessEl = document.getElementById('data-freshness-note');
+        if (freshnessEl) freshnessEl.textContent = (message.data.is_demo ? 'DEMO sample data · ' : 'Tokens: exact local counts · ') + 'updated ' + new Date().toLocaleTimeString();
 
         // Synchronize active filter button with active range on init (defaults to Today)
         if (message.defaultRange) {
@@ -4716,6 +4814,44 @@
       const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
       vscode.postMessage({ command: 'init', start: todayStr, end: todayStr });
     }
+
+    // Auto-refresh: silent 30s poll + refresh when tab becomes visible.
+    // No loading overlay for background polls; matches sendRangeRequest date math.
+    (function setupAutoRefresh() {
+      if (!vscode) return;
+      const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      function currentRange() {
+        const active = document.querySelector('.filter-btn.active');
+        const r = active ? active.getAttribute('data-range') : 'today';
+        const now = new Date();
+        if (r === 'today') { const s = fmt(now); return { start: s, end: s }; }
+        if (r === 'yesterday') { const d = new Date(now); d.setDate(d.getDate() - 1); const s = fmt(d); return { start: s, end: s }; }
+        if (r === '7d') { const d = new Date(now); d.setDate(d.getDate() - 7); return { start: fmt(d), end: fmt(now) }; }
+        if (r === '30d') { const d = new Date(now); d.setDate(d.getDate() - 30); return { start: fmt(d), end: fmt(now) }; }
+        if (r === '90d') { const d = new Date(now); d.setDate(d.getDate() - 90); return { start: fmt(d), end: fmt(now) }; }
+        return { start: null, end: null };
+      }
+      function silentRefresh() {
+        if (document.hidden) return;
+        const { start, end } = currentRange();
+        vscode.postMessage({ command: 'fetchStats', start, end });
+      }
+      setInterval(silentRefresh, 30000);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) silentRefresh();
+      });
+    })();
+
+    // Live countdown ticker: ticks the quota timer every second between data loads.
+    setInterval(() => {
+      const t = document.getElementById('quota-timer-text');
+      const iso = window.__quotaResetIso;
+      if (!t || !iso) return;
+      const diff = new Date(iso).getTime() - Date.now();
+      if (diff > 0) {
+        t.textContent = Math.floor(diff / 3600000) + 'h ' + Math.floor((diff % 3600000) / 60000) + 'm';
+      }
+    }, 1000);
   </script>
 </body>
 </html>

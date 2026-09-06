@@ -11,16 +11,19 @@ import json
 import sqlite3
 import struct
 import urllib.parse
+from pathlib import Path
 from datetime import datetime, timedelta
 from collections import defaultdict, Counter
 from contextlib import closing
 
-CACHE_FILE = os.path.expanduser(r"~\.gemini\antigravity\antigravity_stats_cache.json")
+CACHE_FILE = os.path.join(os.path.expanduser("~"), ".gemini", "antigravity", "antigravity_stats_cache.json")
+
+GEMINI_HOME = os.path.join(os.path.expanduser("~"), ".gemini")
 
 DATA_SOURCES = [
-    {"name": "IDE", "root": os.path.expanduser(r"~\.gemini\antigravity-ide")},
-    {"name": "Core", "root": os.path.expanduser(r"~\.gemini\antigravity")},
-    {"name": "CLI", "root": os.path.expanduser(r"~\.gemini\antigravity-cli")},
+    {"name": "IDE", "root": os.path.join(GEMINI_HOME, "antigravity-ide")},
+    {"name": "Core", "root": os.path.join(GEMINI_HOME, "antigravity")},
+    {"name": "CLI", "root": os.path.join(GEMINI_HOME, "antigravity-cli")},
 ]
 
 def normalize_model_name(raw):
@@ -154,8 +157,8 @@ def parse_proto(data):
 
 def open_readonly_db(db_path):
     """Opens an SQLite database in safe read-only WAL mode"""
-    abs_path = os.path.abspath(db_path).replace('\\', '/')
-    uri = f"file:///{abs_path}?mode=ro"
+    db_uri = Path(os.path.abspath(db_path)).as_uri()
+    uri = f"{db_uri}?mode=ro"
     try:
         con = sqlite3.connect(uri, uri=True, timeout=5.0)
         con.execute("PRAGMA busy_timeout = 3000;")
@@ -163,7 +166,7 @@ def open_readonly_db(db_path):
         return con
     except sqlite3.OperationalError:
         # Fallback to immutable snapshot if exclusive write lock is active
-        imm_uri = f"file:///{abs_path}?mode=ro&immutable=1"
+        imm_uri = f"{db_uri}?mode=ro&immutable=1"
         return sqlite3.connect(imm_uri, uri=True, timeout=2.0)
 
 def parse_session_db(db_path, surface="IDE", brain_dir=None):
@@ -304,9 +307,9 @@ def parse_session_db(db_path, surface="IDE", brain_dir=None):
 
     # 3. Read transcript tool calls and errors across candidate brain directories
     candidate_brains = [
-        os.path.expanduser(r"~\.gemini\antigravity-ide\brain"),
-        os.path.expanduser(r"~\.gemini\antigravity\brain"),
-        os.path.expanduser(r"~\.gemini\antigravity-cli\brain"),
+        os.path.join(GEMINI_HOME, "antigravity-ide", "brain"),
+        os.path.join(GEMINI_HOME, "antigravity", "brain"),
+        os.path.join(GEMINI_HOME, "antigravity-cli", "brain"),
     ]
     if brain_dir and brain_dir not in candidate_brains:
         candidate_brains.insert(0, brain_dir)
@@ -389,6 +392,7 @@ def sync_all_sessions(force=False):
             
     cached_sessions = cache.get("sessions", {})
     updated = False
+    found_any_source = False
     
     for src in DATA_SOURCES:
         root = src["root"]
@@ -397,6 +401,7 @@ def sync_all_sessions(force=False):
         brain_dir = os.path.join(root, "brain")
         if not os.path.exists(convos_dir):
             continue
+        found_any_source = True
 
         db_files = glob.glob(os.path.join(convos_dir, "*.db"))
         for db_path in db_files:
@@ -421,7 +426,7 @@ def sync_all_sessions(force=False):
             except Exception as e:
                 sys.stderr.write(f"Warning: skipped {db_path}: {e}\n")
             
-    if updated or not os.path.exists(CACHE_FILE):
+    if updated or (not os.path.exists(CACHE_FILE) and found_any_source):
         cache["sessions"] = cached_sessions
         cache["last_sync"] = int(datetime.now().timestamp())
         tmp_file = CACHE_FILE + ".tmp"
@@ -564,7 +569,10 @@ def generate_analytics(sessions, start_date=None, end_date=None):
     recent_5h = [s for s in sessions.values() if s.get("mtime", 0) >= cutoff_5h]
     window_tokens = sum(s.get("total_tokens", 0) for s in recent_5h)
     window_turns = sum(s.get("turn_count", 0) for s in recent_5h)
-    is_active = any((now_ts - s.get("mtime", 0)) < 900 for s in sessions.values())
+    ACTIVE_WINDOW_SEC = 120
+    RECENT_WINDOW_SEC = 900
+    is_active = any((now_ts - s.get("mtime", 0)) < ACTIVE_WINDOW_SEC for s in sessions.values())
+    is_recent = any((now_ts - s.get("mtime", 0)) < RECENT_WINDOW_SEC for s in sessions.values())
 
     if recent_5h:
         oldest_ts = min(s.get("mtime", 0) for s in recent_5h)
@@ -623,8 +631,9 @@ def generate_analytics(sessions, start_date=None, end_date=None):
         "seconds_to_reset": secs_left,
         "reset_countdown": reset_str,
         "is_active": is_active,
+        "is_recent": is_recent,
         "active_model": active_model_name,
-        "status": "High Usage" if window_tokens > 60_000_000 else ("Active Session" if is_active else "Healthy"),
+        "status": "High Usage" if window_tokens > 60_000_000 else ("Active Session" if is_active else ("Recent Activity" if is_recent else "Healthy")),
         "gemini": {
             "tokens": gemini_tokens,
             "turns": gemini_turns,
@@ -708,7 +717,8 @@ def generate_analytics(sessions, start_date=None, end_date=None):
                     "project": s.get("project", "General"),
                     "workspace_path": s.get("workspace_path", ""),
                     "surface": s.get("surface", "IDE"),
-                    "is_active": (now_ts - s.get("mtime", 0)) < 900,
+                    "is_active": (now_ts - s.get("mtime", 0)) < ACTIVE_WINDOW_SEC,
+                    "is_recent": (now_ts - s.get("mtime", 0)) < RECENT_WINDOW_SEC,
                     "date": s["date"],
                     "created_at": s["created_at"],
                     "duration_sec": s["duration_sec"],
@@ -729,9 +739,57 @@ def generate_analytics(sessions, start_date=None, end_date=None):
         )[:50]
     }
 
+def build_demo_sessions():
+    """Deterministic sample ledger for screenshots, UI testing, and first-run preview.
+    Same schema as parse_session_db output; no real databases are touched.
+    Token splits honor the calibrated semantics: out includes thinking, inp excludes cache."""
+    base = datetime.now().replace(hour=10, minute=30, second=0, microsecond=0)
+    specs = [
+        # days_ago, project, model, surface, turns, fresh_in, cached, out, think, duration_min, tools
+        (0, "Demo Shop", "Gemini 3.8 Flash", "IDE", 34, 41200, 812000, 18900, 5600, 95, {"run_command": 22, "view_file": 14, "replace_file_content": 9}),
+        (0, "Demo API", "Claude Sonnet 4.6", "CLI", 12, 18500, 204000, 7600, 2300, 41, {"run_command": 9, "grep_search": 6}),
+        (1, "Demo Shop", "Gemini 3.8 Flash", "IDE", 47, 52300, 1150000, 24100, 7100, 132, {"run_command": 31, "view_file": 19, "write_to_file": 7}),
+        (1, "Demo API", "Gemini 3.7 Flash", "IDE", 8, 9400, 88000, 3200, 900, 22, {"view_file": 5, "run_command": 4}),
+        (2, "Demo Shop", "Claude Sonnet 4.6", "CLI", 21, 27600, 402000, 11800, 3400, 64, {"run_command": 15, "grep_search": 8}),
+        (3, "Demo API", "Gemini 3.8 Flash", "Core", 15, 15800, 231000, 6900, 2100, 48, {"view_file": 11, "run_command": 6}),
+        (4, "Demo Shop", "Gemini 3.1 Pro", "IDE", 29, 38400, 689000, 16200, 4900, 88, {"replace_file_content": 13, "run_command": 17, "view_file": 10}),
+        (5, "Demo API", "Claude Sonnet 4.6", "CLI", 6, 7200, 64000, 2400, 700, 18, {"run_command": 5}),
+        (6, "Demo Shop", "Gemini 3.8 Flash", "IDE", 38, 44900, 934000, 20500, 6200, 110, {"run_command": 26, "view_file": 16, "write_to_file": 6}),
+        (6, "Demo API", "Gemini 3.7 Flash", "Core", 11, 12400, 142000, 5100, 1500, 35, {"grep_search": 7, "view_file": 5}),
+    ]
+    sessions = {}
+    for i, (ago, project, model, surface, turns, inp, cached, out, think, dur_min, tools) in enumerate(specs):
+        start = base - timedelta(days=ago)
+        end = start + timedelta(minutes=dur_min)
+        mtime = int(end.timestamp())
+        sessions[f"demo-session-{i:02d}"] = {
+            "convo_id": f"demo-session-{i:02d}",
+            "mtime": mtime,
+            "surface": surface,
+            "created_at": start.strftime('%Y-%m-%d %H:%M:%S'),
+            "date": start.strftime('%Y-%m-%d'),
+            "duration_sec": dur_min * 60,
+            "model": model,
+            "project": project,
+            "workspace_path": "",
+            "title": f"Demo: {project} task #{i + 1}",
+            "turn_count": turns,
+            "input_tokens": inp,
+            "cached_tokens": cached,
+            "output_tokens": out,
+            "thinking_tokens": think,
+            "total_tokens": inp + cached + out,
+            "tool_counts": tools,
+            "tool_errors": 1 if i % 4 == 0 else 0,
+        }
+    return sessions
+
 if __name__ == "__main__":
     force_sync = "--force" in sys.argv or "--rebuild" in sys.argv
-    sessions = sync_all_sessions(force=force_sync)
+    if "--demo" in sys.argv:
+        sessions = build_demo_sessions()
+    else:
+        sessions = sync_all_sessions(force=force_sync)
     
     # Check arguments
     if "--json" in sys.argv:
@@ -756,7 +814,7 @@ if __name__ == "__main__":
         print(f"Total Agent Turns:      {s['total_turns']:,}")
         print(f"Non-Cached Input:       {s['total_input_tokens']:,}")
         print(f"Cached Input (Read):    {s['total_cached_tokens']:,}")
-        print(f"Output Tokens:          {s['total_output_tokens']:,} (Thinking: {s['total_thinking_tokens']:,})")
+        print(f"Output Tokens:          {s['total_output_tokens']:,} (incl. Thinking: {s['total_thinking_tokens']:,})")
         print(f"Total Processed Tokens: {s['total_tokens']:,}")
         print(f"Cache Savings Ratio:    {s['cache_hit_rate_pct']}%")
         print(f"Estimated Spend:        ${c['est_spend']:.2f} (Without Cache: ${c['cost_without_cache']:.2f})")

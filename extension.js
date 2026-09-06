@@ -10,6 +10,49 @@ let statsProvider;
 let fullPanel;
 let autoRefreshTimer;
 let activeChildProcess = null;
+let lastRange = { start: null, end: null };
+let firedQuotaAlerts = {};
+
+/**
+ * Warns once per threshold level when LIVE provider quota crosses it.
+ * Estimates never trigger alerts; levels re-arm after usage drops 5 points.
+ */
+function maybeQuotaAlert(liveQuota) {
+  const config = vscode.workspace.getConfiguration('antigravity-stats');
+  if (!config.get('quotaAlerts', true)) return;
+  const thresholds = (config.get('quotaAlertThresholds', [75, 90, 100]) || [])
+    .filter((t) => typeof t === 'number' && t > 0 && t <= 100)
+    .sort((a, b) => a - b);
+  if (!liveQuota || !thresholds.length) return;
+  const fleets = [
+    { key: 'gemini', label: (liveQuota.gemini && liveQuota.gemini.label) || 'Gemini' },
+    { key: 'claude', label: (liveQuota.claude && liveQuota.claude.label) || 'Claude' },
+  ];
+  for (const f of fleets) {
+    const q = liveQuota[f.key];
+    if (!q || typeof q.used_pct !== 'number') continue;
+    let top = null;
+    for (const t of thresholds) {
+      const k = f.key + ':' + t;
+      if (q.used_pct >= t) {
+        if (!firedQuotaAlerts[k]) {
+          firedQuotaAlerts[k] = true;
+          top = t;
+        }
+      } else if (q.used_pct < t - 5) {
+        delete firedQuotaAlerts[k];
+      }
+    }
+    if (top !== null) {
+      vscode.window.showWarningMessage(
+        `Antigravity quota: ${f.label} at ${q.used_pct}% used (crossed ${top}%; ${liveQuota.tier_name || 'current plan'}).`,
+        'Open Dashboard'
+      ).then((sel) => {
+        if (sel === 'Open Dashboard') vscode.commands.executeCommand('antigravity-stats.openDashboard');
+      });
+    }
+  }
+}
 
 function formatCompact(num) {
   if (num == null) return '0';
@@ -33,7 +76,7 @@ async function resolvePythonPath() {
   const config = vscode.workspace.getConfiguration('antigravity-stats');
   const configuredPath = config.get('pythonPath');
   if (configuredPath && configuredPath.trim() !== '') {
-    return configuredPath.trim();
+    return configuredPath.trim().replace(/^"(.*)"$/, '$1').replace(/^'(.*)'$/, '$1');
   }
 
   // Check VS Code Microsoft Python extension API
@@ -109,20 +152,28 @@ function runCollector(pythonBin, args) {
 
 async function fetchStatsData(args = []) {
   let pythonBin = await resolvePythonPath();
+  const demoCfg = vscode.workspace.getConfiguration('antigravity-stats');
+  if (demoCfg.get('demoMode', false) && !args.includes('--demo')) {
+    args = ['--demo', ...args];
+  }
 
   try {
-    return await runCollector(pythonBin, args);
+    const demoData = await runCollector(pythonBin, args);
+    if (args.includes('--demo')) demoData.is_demo = true;
+    return demoData;
   } catch (err) {
     // Only fallback if the executable itself was not found (ENOENT)
     if (err.code === 'ENOENT') {
       const fallbackBins = process.platform === 'win32'
         ? ['py', 'python', 'python3']
-        : ['python', 'python3', '/usr/bin/python3', '/usr/local/bin/python3'];
+        : ['python3', 'python', '/usr/bin/python3', '/usr/local/bin/python3', '/opt/homebrew/bin/python3'];
 
       for (const fallback of fallbackBins) {
         if (fallback === pythonBin) continue;
         try {
-          return await runCollector(fallback, args);
+          const demoFallback = await runCollector(fallback, args);
+          if (args.includes('--demo')) demoFallback.is_demo = true;
+          return demoFallback;
         } catch (e) {
           if (e.code !== 'ENOENT') {
             throw new Error(`Collector execution failed (${fallback}): ${e.stderr || e.message}`);
@@ -141,6 +192,12 @@ async function updateStatusBar() {
     const today = getLocalDateString();
     const data = await fetchStatsData(['--start', today, '--end', today]);
     const tokens = data.summary.total_tokens;
+    if (data.summary.total_sessions === 0) {
+      statusBarItem.text = `$(graph) AI: no data`;
+      statusBarItem.tooltip = `No Antigravity sessions found yet. Use Antigravity for a task, then Refresh. Looking in ~/.gemini/antigravity*/conversations. Click to open dashboard.`;
+      statusBarItem.show();
+      return;
+    }
     statusBarItem.text = `$(graph) AI: ${formatCompact(tokens)} today`;
     statusBarItem.tooltip = `Antigravity Usage Today: ${tokens.toLocaleString()} tokens across ${data.summary.total_sessions} sessions (${data.summary.cache_hit_rate_pct}% cached). Click to open dashboard.`;
     statusBarItem.show();
@@ -175,11 +232,13 @@ async function handleWebviewMessage(webview, message) {
         const end = message.end || (defaultRange === 'today' ? getLocalDateString() : null);
         if (start) args.push('--start', start);
         if (end) args.push('--end', end);
+        lastRange = { start: start || null, end: end || null };
         const [data, liveQuota] = await Promise.all([
           fetchStatsData(args),
           getLiveQuota().catch(() => null)
         ]);
         if (liveQuota) data.live_quota = liveQuota;
+        maybeQuotaAlert(liveQuota);
         webview.postMessage({ command: 'loadStats', data, defaultRange });
         updateStatusBar();
         break;
@@ -189,11 +248,13 @@ async function handleWebviewMessage(webview, message) {
         const args = [];
         if (message.start) args.push('--start', message.start);
         if (message.end) args.push('--end', message.end);
+        lastRange = { start: message.start || null, end: message.end || null };
         const [data, liveQuota] = await Promise.all([
           fetchStatsData(args),
           getLiveQuota(message.command === 'refresh').catch(() => null)
         ]);
         if (liveQuota) data.live_quota = liveQuota;
+        maybeQuotaAlert(liveQuota);
         webview.postMessage({ command: 'loadStats', data });
         updateStatusBar();
         break;
@@ -205,6 +266,7 @@ async function handleWebviewMessage(webview, message) {
           getLiveQuota(true).catch(() => null)
         ]);
         if (liveQuota) data.live_quota = liveQuota;
+        maybeQuotaAlert(liveQuota);
         webview.postMessage({ command: 'loadStats', data });
         updateStatusBar();
         vscode.window.showInformationMessage('Antigravity token cache rebuild complete.');
@@ -277,7 +339,7 @@ class AntigravityStatsViewProvider {
     });
   }
 
-  async refresh(start = null, end = null) {
+  async refresh(start = lastRange.start, end = lastRange.end) {
     if (this._view) {
       const args = [];
       if (start) args.push('--start', start);
@@ -288,11 +350,19 @@ class AntigravityStatsViewProvider {
           getLiveQuota(true).catch(() => null)
         ]);
         if (liveQuota) data.live_quota = liveQuota;
+        maybeQuotaAlert(liveQuota);
         this._view.webview.postMessage({ command: 'loadStats', data });
         updateStatusBar();
       } catch (err) {
         this._view.webview.postMessage({ command: 'error', message: err.message });
       }
+    }
+  }
+
+  pushStats(data) {
+    if (this._view) {
+      this._view.webview.postMessage({ command: 'loadStats', data });
+      updateStatusBar();
     }
   }
 }
@@ -370,10 +440,14 @@ function activate(context) {
   // 4. Register Rebuild Cache Command
   context.subscriptions.push(
     vscode.commands.registerCommand('antigravity-stats.rebuildCache', async () => {
-      vscode.window.showInformationMessage('Rebuilding Antigravity stats database cache...');
-      await fetchStatsData(['--force']);
-      if (statsProvider) statsProvider.refresh();
-      vscode.window.showInformationMessage('Rebuild complete.');
+      try {
+        vscode.window.showInformationMessage('Rebuilding Antigravity stats database cache...');
+        const rebuildData = await fetchStatsData(['--force']);
+        if (statsProvider) statsProvider.pushStats(rebuildData);
+        vscode.window.showInformationMessage('Rebuild complete.');
+      } catch (err) {
+        vscode.window.showErrorMessage(`Antigravity Stats rebuild failed: ${err.message}`);
+      }
     })
   );
 
@@ -393,6 +467,7 @@ function activate(context) {
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration('antigravity-stats')) {
+        firedQuotaAlerts = {};
         setupAutoRefresh(context);
       }
     })
