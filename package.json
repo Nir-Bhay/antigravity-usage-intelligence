@@ -1,0 +1,193 @@
+{
+  "name": "antigravity-usage-intelligence",
+  "displayName": "Antigravity Usage Intelligence",
+  "description": "Real-time token counter, Gemini prompt cache savings, and analytics dashboard for Google Antigravity AI coding agents. 100% local & private.",
+  "version": "1.0.0",
+  "publisher": "nirbhay-hiwse",
+  "author": {
+    "name": "Nirbhay Hiwse",
+    "url": "https://github.com/Nir-Bhay"
+  },
+  "license": "MIT",
+  "preview": false,
+  "pricing": "Free",
+  "qna": "marketplace",
+  "galleryBanner": {
+    "color": "#0f172a",
+    "theme": "dark"
+  },
+  "badges": [
+    {
+      "url": "https://img.shields.io/badge/Antigravity-Verified-blue?logo=google&logoColor=white&color=3b82f6",
+      "href": "https://github.com/Nir-Bhay/antigravity-usage-intelligence",
+      "description": "Built for Google Antigravity"
+    },
+    {
+      "url": "https://img.shields.io/badge/License-MIT-emerald?color=10b981",
+      "href": "https://github.com/Nir-Bhay/antigravity-usage-intelligence/blob/main/LICENSE",
+      "description": "MIT License"
+    },
+    {
+      "url": "https://img.shields.io/badge/Privacy-100%25%20Local-purple?color=8b5cf6",
+      "href": "https://github.com/Nir-Bhay/antigravity-usage-intelligence#readme",
+      "description": "Zero Telemetry / 100% Local"
+    },
+    {
+      "url": "https://img.shields.io/badge/Cost_Tracking-Gemini_Prompt_Cache-orange?color=f59e0b",
+      "href": "https://github.com/Nir-Bhay/antigravity-usage-intelligence#readme",
+      "description": "Gemini Prompt Caching & Cost Intelligence"
+    }
+  ],
+  "keywords": [
+    "antigravity",
+    "antigravity-stats",
+    "token-tracker",
+    "token-counter",
+    "ai-agent",
+    "gemini",
+    "prompt-caching",
+    "cache-savings",
+    "llm-cost",
+    "cost-tracker",
+    "ai-coding-telemetry",
+    "agent-analytics",
+    "usage-intelligence",
+    "developer-productivity",
+    "thinking-tokens",
+    "token-usage",
+    "dashboard",
+    "activity-heatmap",
+    "observability",
+    "privacy-first"
+  ],
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "AI",
+    "Machine Learning",
+    "Visualization",
+    "Productivity",
+    "Other"
+  ],
+  "icon": "assets/icon.png",
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:antigravity-stats-view"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Antigravity Usage Intelligence",
+      "properties": {
+        "antigravity-stats.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show today's token consumption badge in the bottom Status Bar."
+        },
+        "antigravity-stats.autoRefreshMinutes": {
+          "type": "number",
+          "default": 3,
+          "description": "Auto-refresh frequency in minutes for token usage."
+        },
+        "antigravity-stats.defaultRange": {
+          "type": "string",
+          "default": "today",
+          "enum": [
+            "today",
+            "yesterday",
+            "7d",
+            "30d",
+            "90d",
+            "180d",
+            "all"
+          ],
+          "description": "Default time range loaded on opening the analytics panel."
+        },
+        "antigravity-stats.pythonPath": {
+          "type": "string",
+          "default": "",
+          "description": "Explicit path to Python executable (e.g. C:\\\\Python311\\\\python.exe or /usr/bin/python3). Leave empty for auto-detection."
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "antigravity-stats-container",
+          "title": "Agent Stats",
+          "icon": "assets/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "antigravity-stats-container": [
+        {
+          "type": "webview",
+          "id": "antigravity-stats-view",
+          "name": "Antigravity Stats"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "antigravity-stats.openDashboard",
+        "title": "Open Full Screen Dashboard",
+        "icon": "$(dashboard)"
+      },
+      {
+        "command": "antigravity-stats.refresh",
+        "title": "Refresh Stats",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "antigravity-stats.rebuildCache",
+        "title": "Rebuild Full History Cache",
+        "icon": "$(database)"
+      },
+      {
+        "command": "antigravity-stats.exportReport",
+        "title": "Export Token Usage Report (JSON)",
+        "icon": "$(cloud-download)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "antigravity-stats.openDashboard",
+          "when": "view == antigravity-stats-view",
+          "group": "navigation@1"
+        },
+        {
+          "command": "antigravity-stats.refresh",
+          "when": "view == antigravity-stats-view",
+          "group": "navigation@2"
+        },
+        {
+          "command": "antigravity-stats.rebuildCache",
+          "when": "view == antigravity-stats-view",
+          "group": "navigation@3"
+        }
+      ]
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nir-Bhay/antigravity-usage-intelligence.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Nir-Bhay/antigravity-usage-intelligence/issues"
+  },
+  "homepage": "https://github.com/Nir-Bhay/antigravity-usage-intelligence#readme",
+  "scripts": {
+    "test": "node -c extension.js && python -m py_compile collector.py",
+    "vscode:prepublish": "npm run test",
+    "package": "vsce package",
+    "publish:marketplace": "vsce publish",
+    "publish:openvsx": "ovsx publish"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.2.1",
+    "ovsx": "^0.9.3"
+  }
+}

@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# VS Code extension build artifacts
+*.vsix
+.vscode-test/
+
+# Planning and scratch files
+plan*.md
+scratch/
+.system_generated/
+*.log
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json

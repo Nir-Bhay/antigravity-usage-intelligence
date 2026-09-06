@@ -1,0 +1,60 @@
+# Version control & repository configs
+.git/**
+.gitignore
+.gitattributes
+
+# IDE & Editor configs
+.vscode/**
+.idea/**
+*.code-workspace
+
+# Planning, maintenance & scratch docs
+plan*.md
+.planning/**
+PUBLISHING.md
+llms.txt
+scratch/**
+notes/**
+*.scratch.*
+
+# Packaging artifacts
+*.vsix
+
+# Python bytecode, caches & tests
+__pycache__/**
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/**
+
+# Development, tests & dependencies
+node_modules/**
+package-lock.json
+test/**
+tests/**
+spec/**
+specs/**
+**/*.test.js
+**/*.spec.js
+coverage/**
+.env*
+
+# Temporary & OS files
+*.tmp
+*.log
+*.bak
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Explicitly guarantee critical extension assets are included
+!extension.js
+!collector.py
+!package.json
+!README.md
+!CHANGELOG.md
+!LICENSE
+!LICENSE.txt
+!assets/icon.png
+!assets/icon.svg
+!src/ui/dashboard.html

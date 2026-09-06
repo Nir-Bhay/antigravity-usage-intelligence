@@ -1,0 +1,426 @@
+const vscode = require('vscode');
+const path = require('path');
+const fs = require('fs');
+const crypto = require('crypto');
+const { execFile } = require('child_process');
+const { getLiveQuota } = require('./src/quota_detector');
+
+let statusBarItem;
+let statsProvider;
+let fullPanel;
+let autoRefreshTimer;
+let activeChildProcess = null;
+
+function formatCompact(num) {
+  if (num == null) return '0';
+  if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+  return num.toString();
+}
+
+function getLocalDateString(d = new Date()) {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Intelligent Python executable locator
+ */
+async function resolvePythonPath() {
+  const config = vscode.workspace.getConfiguration('antigravity-stats');
+  const configuredPath = config.get('pythonPath');
+  if (configuredPath && configuredPath.trim() !== '') {
+    return configuredPath.trim();
+  }
+
+  // Check VS Code Microsoft Python extension API
+  try {
+    const pyExt = vscode.extensions.getExtension('ms-python.python');
+    if (pyExt) {
+      if (!pyExt.isActive) await pyExt.activate();
+      const api = pyExt.exports;
+      if (api && api.environments) {
+        const envPath = api.environments.getActiveEnvironmentPath();
+        const resolved = await api.environments.resolveEnvironment(envPath);
+        if (resolved && resolved.executable && resolved.executable.uri) {
+          return resolved.executable.uri.fsPath;
+        }
+      }
+    }
+  } catch (e) {
+    // Ignore and fallback
+  }
+
+  // Check virtualenvs
+  if (process.env.VIRTUAL_ENV) {
+    const venvPy = process.platform === 'win32'
+      ? path.join(process.env.VIRTUAL_ENV, 'Scripts', 'python.exe')
+      : path.join(process.env.VIRTUAL_ENV, 'bin', 'python');
+    if (fs.existsSync(venvPy)) return venvPy;
+  }
+
+  // Check workspace .venv
+  const folders = vscode.workspace.workspaceFolders;
+  if (folders) {
+    for (const folder of folders) {
+      const venvPy = process.platform === 'win32'
+        ? path.join(folder.uri.fsPath, '.venv', 'Scripts', 'python.exe')
+        : path.join(folder.uri.fsPath, '.venv', 'bin', 'python');
+      if (fs.existsSync(venvPy)) return venvPy;
+    }
+  }
+
+  // Default platform candidates
+  return process.platform === 'win32' ? 'python' : 'python3';
+}
+
+/**
+ * Executes python collector with candidate fallback and timeout
+ */
+function runCollector(pythonBin, args) {
+  return new Promise((resolve, reject) => {
+    const scriptPath = path.join(__dirname, 'collector.py');
+    const cmdArgs = [scriptPath, '--json', ...args];
+
+    const child = execFile(
+      pythonBin,
+      cmdArgs,
+      { maxBuffer: 15 * 1024 * 1024, timeout: 30000 },
+      (error, stdout, stderr) => {
+        if (activeChildProcess === child) activeChildProcess = null;
+        if (error) {
+          error.stderr = stderr;
+          return reject(error);
+        }
+        try {
+          const parsed = JSON.parse(stdout.trim());
+          resolve(parsed);
+        } catch (e) {
+          reject(new Error(`Failed to parse collector JSON output: ${e.message}`));
+        }
+      }
+    );
+    activeChildProcess = child;
+  });
+}
+
+async function fetchStatsData(args = []) {
+  let pythonBin = await resolvePythonPath();
+
+  try {
+    return await runCollector(pythonBin, args);
+  } catch (err) {
+    // Only fallback if the executable itself was not found (ENOENT)
+    if (err.code === 'ENOENT') {
+      const fallbackBins = process.platform === 'win32'
+        ? ['py', 'python', 'python3']
+        : ['python', 'python3', '/usr/bin/python3', '/usr/local/bin/python3'];
+
+      for (const fallback of fallbackBins) {
+        if (fallback === pythonBin) continue;
+        try {
+          return await runCollector(fallback, args);
+        } catch (e) {
+          if (e.code !== 'ENOENT') {
+            throw new Error(`Collector execution failed (${fallback}): ${e.stderr || e.message}`);
+          }
+        }
+      }
+      throw new Error(`Python interpreter not found. Please set "antigravity-stats.pythonPath" in settings.`);
+    }
+    throw new Error(`Collector error: ${err.stderr || err.message}`);
+  }
+}
+
+async function updateStatusBar() {
+  if (!statusBarItem) return;
+  try {
+    const today = getLocalDateString();
+    const data = await fetchStatsData(['--start', today, '--end', today]);
+    const tokens = data.summary.total_tokens;
+    statusBarItem.text = `$(graph) AI: ${formatCompact(tokens)} today`;
+    statusBarItem.tooltip = `Antigravity Usage Today: ${tokens.toLocaleString()} tokens across ${data.summary.total_sessions} sessions (${data.summary.cache_hit_rate_pct}% cached). Click to open dashboard.`;
+    statusBarItem.show();
+  } catch (err) {
+    statusBarItem.text = `$(graph) AI Stats`;
+    statusBarItem.tooltip = `Antigravity Stats error: ${err.message}`;
+    statusBarItem.show();
+  }
+}
+
+function getWebviewContent(webview, extensionUri) {
+  const htmlPath = path.join(extensionUri.fsPath, 'src', 'ui', 'dashboard.html');
+  let html = fs.readFileSync(htmlPath, 'utf8');
+
+  const nonce = crypto.randomBytes(16).toString('base64');
+  const cspMeta = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https: data:; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}';">`;
+
+  // Inject CSP and nonce
+  html = html.replace('<head>', `<head>\n  ${cspMeta}`);
+  html = html.replace(/<script>/g, `<script nonce="${nonce}">`);
+  return html;
+}
+
+async function handleWebviewMessage(webview, message) {
+  try {
+    switch (message.command) {
+      case 'init': {
+        const config = vscode.workspace.getConfiguration('antigravity-stats');
+        const defaultRange = config.get('defaultRange', 'today');
+        const args = [];
+        const start = message.start || (defaultRange === 'today' ? getLocalDateString() : null);
+        const end = message.end || (defaultRange === 'today' ? getLocalDateString() : null);
+        if (start) args.push('--start', start);
+        if (end) args.push('--end', end);
+        const [data, liveQuota] = await Promise.all([
+          fetchStatsData(args),
+          getLiveQuota().catch(() => null)
+        ]);
+        if (liveQuota) data.live_quota = liveQuota;
+        webview.postMessage({ command: 'loadStats', data, defaultRange });
+        updateStatusBar();
+        break;
+      }
+      case 'refresh':
+      case 'fetchStats': {
+        const args = [];
+        if (message.start) args.push('--start', message.start);
+        if (message.end) args.push('--end', message.end);
+        const [data, liveQuota] = await Promise.all([
+          fetchStatsData(args),
+          getLiveQuota(message.command === 'refresh').catch(() => null)
+        ]);
+        if (liveQuota) data.live_quota = liveQuota;
+        webview.postMessage({ command: 'loadStats', data });
+        updateStatusBar();
+        break;
+      }
+      case 'rebuild': {
+        vscode.window.showInformationMessage('Rebuilding Antigravity token cache from disk...');
+        const [data, liveQuota] = await Promise.all([
+          fetchStatsData(['--force']),
+          getLiveQuota(true).catch(() => null)
+        ]);
+        if (liveQuota) data.live_quota = liveQuota;
+        webview.postMessage({ command: 'loadStats', data });
+        updateStatusBar();
+        vscode.window.showInformationMessage('Antigravity token cache rebuild complete.');
+        break;
+      }
+      case 'openFullDashboard': {
+        vscode.commands.executeCommand('antigravity-stats.openDashboard');
+        break;
+      }
+      case 'exportJSON': {
+        const doc = await vscode.workspace.openTextDocument({
+          content: JSON.stringify(message.data, null, 2),
+          language: 'json'
+        });
+        await vscode.window.showTextDocument(doc);
+        break;
+      }
+      case 'exportCSV': {
+        const sessions = (message.data && message.data.recent_sessions) ? message.data.recent_sessions : [];
+        let csv = 'Date,Session ID,Project,Model,Turns,Duration (sec),Input Tokens,Cached Tokens,Output Tokens,Thinking Tokens,Total Tokens,Prompt Title\n';
+        sessions.forEach(s => {
+          const cleanTitle = (s.title || '').replace(/"/g, '""');
+          csv += `"${s.date}","${s.convo_id}","${s.project || 'General'}","${s.model}","${s.turn_count}","${s.duration_sec}","${s.input_tokens}","${s.cached_tokens}","${s.output_tokens}","${s.thinking_tokens || 0}","${s.total_tokens}","${cleanTitle}"\n`;
+        });
+        const doc = await vscode.workspace.openTextDocument({
+          content: csv,
+          language: 'csv'
+        });
+        await vscode.window.showTextDocument(doc);
+        break;
+      }
+      case 'copyToClipboard': {
+        if (message.text) {
+          await vscode.env.clipboard.writeText(message.text);
+          if (message.toast) {
+            vscode.window.showInformationMessage(message.toast);
+          }
+        }
+        break;
+      }
+      case 'openFolder': {
+        if (message.path) {
+          const uri = vscode.Uri.file(message.path);
+          vscode.commands.executeCommand('vscode.openFolder', uri, true);
+        }
+        break;
+      }
+    }
+  } catch (err) {
+    vscode.window.showErrorMessage(`Antigravity Stats: ${err.message}`);
+    webview.postMessage({ command: 'error', message: err.message });
+  }
+}
+
+class AntigravityStatsViewProvider {
+  constructor(extensionUri) {
+    this._extensionUri = extensionUri;
+    this._view = null;
+  }
+
+  resolveWebviewView(webviewView) {
+    this._view = webviewView;
+    webviewView.webview.options = {
+      enableScripts: true,
+      localResourceRoots: [this._extensionUri]
+    };
+    webviewView.webview.html = getWebviewContent(webviewView.webview, this._extensionUri);
+    webviewView.webview.onDidReceiveMessage(async (message) => {
+      await handleWebviewMessage(webviewView.webview, message);
+    });
+  }
+
+  async refresh(start = null, end = null) {
+    if (this._view) {
+      const args = [];
+      if (start) args.push('--start', start);
+      if (end) args.push('--end', end);
+      try {
+        const [data, liveQuota] = await Promise.all([
+          fetchStatsData(args),
+          getLiveQuota(true).catch(() => null)
+        ]);
+        if (liveQuota) data.live_quota = liveQuota;
+        this._view.webview.postMessage({ command: 'loadStats', data });
+        updateStatusBar();
+      } catch (err) {
+        this._view.webview.postMessage({ command: 'error', message: err.message });
+      }
+    }
+  }
+}
+
+function setupAutoRefresh(context) {
+  if (autoRefreshTimer) {
+    clearInterval(autoRefreshTimer);
+    autoRefreshTimer = null;
+  }
+  const config = vscode.workspace.getConfiguration('antigravity-stats');
+  const showBar = config.get('showStatusBar', true);
+  const minutes = Math.max(1, config.get('autoRefreshMinutes', 3));
+
+  if (showBar) {
+    if (!statusBarItem) {
+      statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 95);
+      statusBarItem.command = 'antigravity-stats.openDashboard';
+      context.subscriptions.push(statusBarItem);
+    }
+    updateStatusBar();
+    autoRefreshTimer = setInterval(() => {
+      updateStatusBar();
+    }, minutes * 60 * 1000);
+  } else if (statusBarItem) {
+    statusBarItem.hide();
+  }
+}
+
+function activate(context) {
+  // 1. Register Sidebar Webview
+  statsProvider = new AntigravityStatsViewProvider(context.extensionUri);
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider('antigravity-stats-view', statsProvider)
+  );
+
+  // 2. Register Full Screen Dashboard command
+  context.subscriptions.push(
+    vscode.commands.registerCommand('antigravity-stats.openDashboard', () => {
+      if (fullPanel) {
+        fullPanel.reveal(vscode.ViewColumn.One);
+        return;
+      }
+
+      fullPanel = vscode.window.createWebviewPanel(
+        'antigravityStatsFull',
+        'Antigravity Usage Intelligence',
+        vscode.ViewColumn.One,
+        {
+          enableScripts: true,
+          retainContextWhenHidden: true,
+          localResourceRoots: [context.extensionUri]
+        }
+      );
+
+      fullPanel.webview.html = getWebviewContent(fullPanel.webview, context.extensionUri);
+
+      fullPanel.webview.onDidReceiveMessage(async (message) => {
+        await handleWebviewMessage(fullPanel.webview, message);
+      });
+
+      fullPanel.onDidDispose(() => {
+        fullPanel = null;
+      }, null, context.subscriptions);
+    })
+  );
+
+  // 3. Register Refresh Command
+  context.subscriptions.push(
+    vscode.commands.registerCommand('antigravity-stats.refresh', () => {
+      if (statsProvider) statsProvider.refresh();
+      vscode.window.showInformationMessage('Antigravity Stats refreshed.');
+    })
+  );
+
+  // 4. Register Rebuild Cache Command
+  context.subscriptions.push(
+    vscode.commands.registerCommand('antigravity-stats.rebuildCache', async () => {
+      vscode.window.showInformationMessage('Rebuilding Antigravity stats database cache...');
+      await fetchStatsData(['--force']);
+      if (statsProvider) statsProvider.refresh();
+      vscode.window.showInformationMessage('Rebuild complete.');
+    })
+  );
+
+  // 5. Register Export Command
+  context.subscriptions.push(
+    vscode.commands.registerCommand('antigravity-stats.exportReport', async () => {
+      const data = await fetchStatsData();
+      const doc = await vscode.workspace.openTextDocument({
+        content: JSON.stringify(data, null, 2),
+        language: 'json'
+      });
+      await vscode.window.showTextDocument(doc);
+    })
+  );
+
+  // 6. Config change listener
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration('antigravity-stats')) {
+        setupAutoRefresh(context);
+      }
+    })
+  );
+
+  // 7. Initialize status bar & timer
+  setupAutoRefresh(context);
+}
+
+function deactivate() {
+  if (autoRefreshTimer) {
+    clearInterval(autoRefreshTimer);
+    autoRefreshTimer = null;
+  }
+  if (activeChildProcess) {
+    try { activeChildProcess.kill(); } catch (e) {}
+    activeChildProcess = null;
+  }
+  if (statusBarItem) {
+    statusBarItem.dispose();
+  }
+  if (fullPanel) {
+    fullPanel.dispose();
+    fullPanel = null;
+  }
+}
+
+module.exports = {
+  activate,
+  deactivate
+};
