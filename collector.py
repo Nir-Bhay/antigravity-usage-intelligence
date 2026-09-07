@@ -666,6 +666,20 @@ def generate_analytics(sessions, start_date=None, end_date=None):
     # Sorted daily list
     daily_list = [{"date": k, **v} for k, v in sorted(daily.items())]
 
+    # Full historical daily activity for the annual/multi-month contribution heatmap
+    all_daily = defaultdict(lambda: {"input": 0, "cached": 0, "output": 0, "thinking": 0, "total": 0, "sessions": 0, "turns": 0})
+    for s in sessions.values():
+        d = s.get("date")
+        if d:
+            all_daily[d]["input"] += s.get("input_tokens", 0)
+            all_daily[d]["cached"] += s.get("cached_tokens", 0)
+            all_daily[d]["output"] += s.get("output_tokens", 0)
+            all_daily[d]["thinking"] += s.get("thinking_tokens", 0)
+            all_daily[d]["total"] += s.get("total_tokens", 0)
+            all_daily[d]["sessions"] += 1
+            all_daily[d]["turns"] += s.get("turn_count", 0)
+    all_daily_list = [{"date": k, **v} for k, v in sorted(all_daily.items())]
+
     # Project breakdown
     projects = defaultdict(lambda: {"input": 0, "cached": 0, "output": 0, "thinking": 0, "total": 0, "sessions": 0, "turns": 0})
     for s in filtered_sessions:
@@ -715,6 +729,7 @@ def generate_analytics(sessions, start_date=None, end_date=None):
         "quota": quota_info,
         "hourly": hourly,
         "daily": daily_list,
+        "all_daily": all_daily_list,
         "models": dict(models),
         "models_list": models_list,
         "surfaces": dict(surfaces),

@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.5] - 2026-09-07
+
+### Improved
+* **Continuous GitHub-Style Activity Matrix**: Replaced fixed 30d/90d views with a continuous 26-week (~6 month) rolling contribution matrix ending on Today's week. Eliminates awkward blank left space and auto-scrolls to the latest week on open.
+* **Eliminated Cluttered Tabs**: Removed the "Last 30 Days", "90 Days View", and "All History" tab buttons from the heatmap header in favor of a clean, persistent contribution view just like GitHub profiles.
+* **Streamlined Summary Bar**: Removed the bulky 4-card grid (90D Tokens, Active Pace, Window) and heavy progress bars. Replaced with a sleek, single-line meta bar displaying Active Days, Consistency %, Peak Day, and Current Streak.
+* **Sleek All-History Filter**: Upgraded the action button to quickly filter the entire dashboard to all recorded sessions with one click.
+* **Persistent Historical Daily Aggregation**: Added `all_daily` to backend analytics collector so the contribution matrix stays fully populated even when top filters are set to "Today" or "Yesterday".
+
+---
+
 ## [1.0.4] - 2026-09-07
 
 ### Improved

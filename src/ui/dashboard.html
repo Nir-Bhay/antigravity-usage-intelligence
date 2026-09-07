@@ -1301,25 +1301,24 @@
       color: #fbbf24;
     }
 
-    /* GitHub-Grade Responsive Activity Heatmap & Status Panel */
+    /* GitHub-Grade Responsive Activity Heatmap */
     .heatmap-wrapper {
       display: flex;
-      gap: 12px;
-      align-items: stretch;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 8px;
       width: 100%;
     }
 
     .github-heatmap-section {
-      flex: 1.35;
+      width: 100%;
       min-width: 0;
       background: rgba(255, 255, 255, 0.015);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 10px 12px;
+      padding: 8px 10px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
     }
@@ -1454,114 +1453,77 @@
       box-shadow: 0 0 8px rgba(56, 189, 248, 0.5) !important;
     }
 
-    /* Right Stats Panel */
-    .heatmap-stats-panel {
-      flex: 1;
-      min-width: 220px;
+    /* Clean GitHub-Style Summary Bar & Action */
+    .heat-summary-bar {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 6px 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 11px;
+    }
+
+    .heat-summary-item {
+      display: inline-flex;
+      align-items: center;
       gap: 5px;
-      justify-content: space-between;
+      white-space: nowrap;
     }
 
-    .heat-consistency-wrap {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 5px 8px;
+    .heat-summary-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
     }
 
-    .heat-consistency-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 3px;
-      font-size: 9.5px;
-    }
-
-    .heat-consistency-bar {
-      height: 4px;
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .heat-consistency-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
-      border-radius: 2px;
-      box-shadow: 0 0 6px rgba(52, 211, 153, 0.4);
-      transition: width 0.3s ease;
-    }
-
-    .heat-status-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px;
-    }
-
-    .heat-status-card {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 5px 7px;
-      display: flex;
-      flex-direction: column;
-      min-height: 40px;
-      justify-content: center;
-      transition: all 0.15s ease;
-    }
-
-    .heat-status-card:hover {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(255, 255, 255, 0.15);
-    }
-
-    .heat-status-label {
-      font-size: 8px;
+    .heat-summary-label {
       color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-bottom: 1px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
+      font-size: 10.5px;
+      font-weight: 500;
     }
 
-    .heat-status-val {
-      font-size: 12px;
-      font-weight: 700;
+    .heat-summary-val {
       color: #f1f5f9;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      line-height: 1.1;
+      font-size: 11px;
+      font-weight: 600;
     }
 
-    .heat-status-sub {
-      font-size: 8px;
-      color: var(--text-muted);
-      margin-top: 1px;
+    .heat-summary-divider {
+      color: var(--border-color);
+      font-size: 12px;
+      user-select: none;
+    }
+
+    .heat-actions-row {
+      display: flex;
+      width: 100%;
     }
 
     .btn-heatmap-action {
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px solid rgba(56, 189, 248, 0.25);
+      background: rgba(56, 189, 248, 0.06);
+      border: 1px solid rgba(56, 189, 248, 0.2);
       color: var(--accent-blue);
       border-radius: 5px;
-      font-size: 9.5px;
+      font-size: 10.5px;
       font-weight: 500;
-      padding: 4px 8px;
+      padding: 5px 10px;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 6px;
       transition: all 0.15s ease;
       width: 100%;
     }
 
     .btn-heatmap-action:hover {
-      background: rgba(56, 189, 248, 0.18);
-      border-color: rgba(56, 189, 248, 0.45);
+      background: rgba(56, 189, 248, 0.14);
+      border-color: rgba(56, 189, 248, 0.4);
     }
 
     /* Heatmap Legend Colors */
@@ -1570,27 +1532,6 @@
     .legend-color.heat-2 { background: #006d32; }
     .legend-color.heat-3 { background: #26a641; }
     .legend-color.heat-4 { background: #39d353; }
-
-    /* Responsive adjustments: Narrow Sidebar vs Wide Dashboard */
-    @media (max-width: 680px) {
-      .heatmap-wrapper {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-      }
-      .github-heatmap-section {
-        width: 100%;
-      }
-      .heatmap-stats-panel {
-        width: 100%;
-        min-width: 0;
-      }
-    }
-    @media (max-width: 360px) {
-      .heat-status-grid {
-        grid-template-columns: 1fr;
-      }
-    }
 
     /* Project Pills & Collapsible Container */
     .projects-wrapper {
@@ -2317,9 +2258,6 @@
       .model-metrics-grid {
         grid-template-columns: repeat(2, 1fr) !important;
       }
-      .heat-status-grid {
-        grid-template-columns: 1fr !important;
-      }
       .drawer-specs-grid {
         grid-template-columns: 1fr !important;
       }
@@ -2636,12 +2574,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         <span>Agent Activity Heatmap</span>
       </div>
-      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-        <div class="heat-toggle-group">
-          <button class="heat-toggle-btn active" id="btn-heat-30">Last 30 Days</button>
-          <button class="heat-toggle-btn" id="btn-heat-90">90 Days View</button>
-          <button class="heat-toggle-btn" id="btn-heat-all">All History</button>
-        </div>
+      <div style="display:flex; align-items:center; gap:8px;">
         <div class="legend">
           <span style="color:var(--text-muted); font-size:10px;">Less</span>
           <div class="legend-color heat-0"></div>
@@ -2946,7 +2879,6 @@
     let isProjectsCollapsed = true;
     let isSessionsExpanded = false;
     let selectedModelFilter = '__ALL__';
-    let heatmapMode = '30d';
     let trendViewMode = '30d';
 
     const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -3194,7 +3126,7 @@
       renderHourlyChart(data.hourly || []);
 
       // Render Heatmap
-      renderHeatmap(daily);
+      renderHeatmap(data.all_daily || daily);
 
       // Render Sessions Table
       renderSessionsTable();
@@ -3837,70 +3769,57 @@
       if (!container) return;
       container.innerHTML = '';
 
-      const btn30 = document.getElementById('btn-heat-30');
-      const btn90 = document.getElementById('btn-heat-90');
-      const btnAll = document.getElementById('btn-heat-all');
-      if (btn30 && btn90) {
-        btn30.classList.toggle('active', heatmapMode === '30d');
-        btn90.classList.toggle('active', heatmapMode === '90d');
-        if (btnAll) btnAll.classList.toggle('active', heatmapMode === 'all');
-
-        btn30.onclick = () => {
-          if (heatmapMode !== '30d') {
-            heatmapMode = '30d';
-            renderHeatmap(daily);
-          }
-        };
-        btn90.onclick = () => {
-          if (heatmapMode !== '90d') {
-            heatmapMode = '90d';
-            renderHeatmap(daily);
-          }
-        };
-        if (btnAll) {
-          btnAll.onclick = () => {
-            if (heatmapMode !== 'all') {
-              heatmapMode = 'all';
-              renderHeatmap(daily);
-            }
-          };
-        }
-      }
-
       const dayMap = {};
       (daily || []).forEach(d => { dayMap[d.date] = d; });
 
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      let numDays = 30;
-      if (heatmapMode === '90d') {
-        numDays = 90;
-      } else if (heatmapMode === 'all') {
-        if (daily && daily.length > 0) {
-          const earliest = new Date(daily[0].date);
-          const diffDays = Math.ceil((today.getTime() - earliest.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-          numDays = Math.max(90, Math.min(365, diffDays));
-        } else {
-          numDays = 90;
-        }
-      }
-      const startDate = new Date(today);
-      startDate.setDate(today.getDate() - (numDays - 1));
 
       const toYMD = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
       const todayStr = toYMD(today);
-      const startStr = toYMD(startDate);
 
-      // Compute statistics for active span
+      // Determine span: minimum 26 continuous weeks (~6 months / 182 days) up to 52 weeks (1 year)
+      let numWeeks = 26;
+      if (daily && daily.length > 0) {
+        const earliestStr = daily[0].date;
+        if (earliestStr) {
+          const earliestDate = new Date(earliestStr);
+          const diffWeeks = Math.ceil((today.getTime() - earliestDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
+          if (diffWeeks > 26) {
+            numWeeks = Math.min(52, diffWeeks + 2);
+          }
+        }
+      }
+
+      // Week alignment: Monday (0) to Sunday (6)
+      const todayDayOfWeek = (today.getDay() + 6) % 7;
+      const startOfGrid = new Date(today);
+      startOfGrid.setDate(today.getDate() - todayDayOfWeek - ((numWeeks - 1) * 7));
+      const startStr = toYMD(startOfGrid);
+
+      // Build weeks matrix (exactly numWeeks columns)
+      const weeks = [];
+      let curr = new Date(startOfGrid);
+      for (let w = 0; w < numWeeks; w++) {
+        const weekDays = [];
+        for (let d = 0; d < 7; d++) {
+          weekDays.push(new Date(curr));
+          curr.setDate(curr.getDate() + 1);
+        }
+        weeks.push(weekDays);
+      }
+
+      // Compute statistics across the entire grid span
       let daysActive = 0;
       let totalTokens = 0;
       let totalTurns = 0;
       let peakDay = null;
+      let totalDaysPast = 0;
 
-      for (let i = numDays - 1; i >= 0; i--) {
-        const d = new Date(today);
-        d.setDate(today.getDate() - i);
-        const ds = toYMD(d);
+      let dCursor = new Date(startOfGrid);
+      while (dCursor <= today) {
+        totalDaysPast++;
+        const ds = toYMD(dCursor);
         const rec = dayMap[ds];
         if (rec && rec.total > 0) {
           daysActive++;
@@ -3910,29 +3829,27 @@
             peakDay = { date: ds, total: rec.total, turns: rec.turns || 0, sessions: rec.sessions || 1 };
           }
         }
+        dCursor.setDate(dCursor.getDate() + 1);
       }
 
-      const consistencyPct = Math.round((daysActive / numDays) * 100);
-      const avgDailyTokens = daysActive > 0 ? Math.round(totalTokens / daysActive) : 0;
+      const consistencyPct = totalDaysPast > 0 ? Math.round((daysActive / totalDaysPast) * 100) : 0;
 
-      // GitHub Graph Week Alignment: Monday (0) to Sunday (6)
-      const startDayOfWeek = (startDate.getDay() + 6) % 7;
-      const firstGridDate = new Date(startDate);
-      firstGridDate.setDate(startDate.getDate() - startDayOfWeek);
-
-      const endDayOfWeek = (today.getDay() + 6) % 7;
-      const lastGridDate = new Date(today);
-      lastGridDate.setDate(today.getDate() + (6 - endDayOfWeek));
-
-      const weeks = [];
-      let curr = new Date(firstGridDate);
-      while (curr <= lastGridDate) {
-        const weekDays = [];
-        for (let i = 0; i < 7; i++) {
-          weekDays.push(new Date(curr));
-          curr.setDate(curr.getDate() + 1);
+      // Calculate current streak
+      let currentStreak = 0;
+      let streakCursor = new Date(today);
+      const todayRec = dayMap[todayStr];
+      if (!todayRec || todayRec.total <= 0) {
+        streakCursor.setDate(streakCursor.getDate() - 1);
+      }
+      while (true) {
+        const ds = toYMD(streakCursor);
+        const rec = dayMap[ds];
+        if (rec && rec.total > 0) {
+          currentStreak++;
+          streakCursor.setDate(streakCursor.getDate() - 1);
+        } else {
+          break;
         }
-        weeks.push(weekDays);
       }
 
       // --- SECTION 1: GitHub Contribution Matrix ---
@@ -3943,20 +3860,16 @@
       const monthsRow = document.createElement('div');
       monthsRow.className = 'github-months-row';
 
-      const cellWidth = 12;
-      const cellGap = 3;
-      const colStep = cellWidth + cellGap; // 15px
-
       let lastMonth = -1;
       weeks.forEach((w, colIdx) => {
         const firstDay = w[0];
         const m = firstDay.getMonth();
-        if (m !== lastMonth) {
+        if (m !== lastMonth && (firstDay.getDate() <= 7 || colIdx === 0)) {
           lastMonth = m;
           const mLbl = document.createElement('div');
           mLbl.className = 'github-month-lbl';
           mLbl.textContent = firstDay.toLocaleString('en-US', { month: 'short' });
-          mLbl.style.left = `${28 + colIdx * colStep}px`;
+          mLbl.style.left = `${28 + colIdx * 15}px`;
           monthsRow.appendChild(mLbl);
         }
       });
@@ -3966,7 +3879,6 @@
       const bodyRow = document.createElement('div');
       bodyRow.className = 'github-body-row';
 
-      // Weekdays column: Mon, Wed, Fri (like GitHub)
       const weekdaysCol = document.createElement('div');
       weekdaysCol.className = 'github-weekdays-col';
       const dayNames = ['Mon', '', 'Wed', '', 'Fri', '', ''];
@@ -3988,12 +3900,12 @@
 
         w.forEach(cellDate => {
           const dateStr = toYMD(cellDate);
-          const isOutOfRange = (dateStr < startStr || dateStr > todayStr);
+          const isFuture = (dateStr > todayStr);
           const isToday = (dateStr === todayStr);
 
           const cell = document.createElement('div');
 
-          if (isOutOfRange) {
+          if (isFuture) {
             cell.className = 'github-cell empty';
           } else {
             const rec = dayMap[dateStr];
@@ -4041,72 +3953,62 @@
       graphSection.appendChild(bodyRow);
       container.appendChild(graphSection);
 
-      // --- SECTION 2: Compact High-Density Stats Panel ---
-      const statsPanel = document.createElement('div');
-      statsPanel.className = 'heatmap-stats-panel';
-
-      // 2.1 Consistency Bar
-      const consistencyCard = document.createElement('div');
-      consistencyCard.className = 'heat-consistency-wrap';
-      consistencyCard.innerHTML = `
-        <div class="heat-consistency-header">
-          <span style="color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.4px; font-size:9.5px;">${numDays}-Day Consistency</span>
-          <span style="font-weight:700; color:#34d399; font-family:ui-monospace, monospace; font-size:10.5px;">${daysActive} / ${numDays} Days (${consistencyPct}%)</span>
-        </div>
-        <div class="heat-consistency-bar">
-          <div class="heat-consistency-fill" style="width:${consistencyPct}%;"></div>
-        </div>
-      `;
-      statsPanel.appendChild(consistencyCard);
-
-      // 2.2 4-Tile Compact Grid
-      const statsGrid = document.createElement('div');
-      statsGrid.className = 'heat-status-grid';
-      statsGrid.innerHTML = `
-        <div class="heat-status-card" style="border-left: 2px solid #38bdf8;">
-          <div class="heat-status-label"><span>⚡</span> ${numDays}D Tokens</div>
-          <div class="heat-status-val" style="color:#7dd3fc;">${formatNumber(totalTokens)}</div>
-          <div class="heat-status-sub">${totalTurns.toLocaleString()} turns</div>
-        </div>
-
-        <div class="heat-status-card" style="border-left: 2px solid #f59e0b;">
-          <div class="heat-status-label"><span>🔥</span> Peak Day</div>
-          <div class="heat-status-val" style="color:#fbbf24; font-size:12px;">${peakDay ? formatDateShort(peakDay.date) : 'None'}</div>
-          <div class="heat-status-sub">${peakDay ? formatNumber(peakDay.total) : '-'}</div>
-        </div>
-
-        <div class="heat-status-card" style="border-left: 2px solid #10b981;">
-          <div class="heat-status-label"><span>🚀</span> Active Pace</div>
-          <div class="heat-status-val" style="color:#34d399;">${formatNumber(avgDailyTokens)}</div>
-          <div class="heat-status-sub">Avg / active day</div>
-        </div>
-
-        <div class="heat-status-card" style="border-left: 2px solid #a855f7;">
-          <div class="heat-status-label"><span>📅</span> Window</div>
-          <div class="heat-status-val" style="font-size:11px; color:#c084fc;">${formatDateShort(startStr)} – ${formatDateShort(todayStr)}</div>
-          <div class="heat-status-sub">${numDays} rolling days</div>
-        </div>
-      `;
-      statsPanel.appendChild(statsGrid);
-
-      // 2.3 Action Button
-      const btnFilter = document.createElement('button');
-      btnFilter.className = 'btn-heatmap-action';
-      const filterLabel = heatmapMode === 'all' ? 'All History' : `${numDays} Days`;
-      btnFilter.innerHTML = `<span>📅</span> <span>Filter Dashboard to ${filterLabel}</span>`;
-      btnFilter.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => {
-          const r = b.getAttribute('data-range');
-          if (heatmapMode === 'all') b.classList.toggle('active', r === 'all');
-          else if (numDays === 90) b.classList.toggle('active', r === 'all' || r === '90d');
-          else b.classList.toggle('active', r === '30d');
-        });
-        sendRangeRequestCustom(startStr, todayStr);
-        showToast(`Applied ${filterLabel} filter`);
+      // Auto-scroll to today so recent weeks are immediately visible
+      requestAnimationFrame(() => {
+        graphSection.scrollLeft = graphSection.scrollWidth;
       });
-      statsPanel.appendChild(btnFilter);
 
-      container.appendChild(statsPanel);
+      // --- SECTION 2: Clean GitHub-Style Summary Bar ---
+      const summaryBar = document.createElement('div');
+      summaryBar.className = 'heat-summary-bar';
+
+      const monthsCount = Math.round(numWeeks / 4.33);
+      summaryBar.innerHTML = `
+        <div class="heat-summary-item" title="${daysActive} active coding days out of ${totalDaysPast} days in the last ${monthsCount} months">
+          <span class="heat-summary-dot" style="background:#22c55e;"></span>
+          <span class="heat-summary-label">Active:</span>
+          <span class="heat-summary-val"><strong>${daysActive}</strong> days <span style="color:var(--text-muted); font-size:10px;">(${consistencyPct}%)</span></span>
+        </div>
+
+        <div class="heat-summary-divider">·</div>
+
+        <div class="heat-summary-item" title="Peak activity: ${peakDay ? formatNumber(peakDay.total) + ' tokens in ' + peakDay.turns + ' turns' : 'None'}">
+          <span style="font-size:11px;">🔥</span>
+          <span class="heat-summary-label">Peak:</span>
+          <span class="heat-summary-val" style="color:#fbbf24;"><strong>${peakDay ? formatDateShort(peakDay.date) : 'None'}</strong></span>
+          ${peakDay ? `<span style="color:var(--text-muted); font-size:10px; font-family:monospace;">(${formatNumber(peakDay.total)})</span>` : ''}
+        </div>
+
+        ${currentStreak > 0 ? `
+          <div class="heat-summary-divider">·</div>
+          <div class="heat-summary-item" title="Current consecutive days coding streak">
+            <span style="font-size:11px;">⚡</span>
+            <span class="heat-summary-label">Streak:</span>
+            <span class="heat-summary-val" style="color:#38bdf8;"><strong>${currentStreak}</strong>d</span>
+          </div>
+        ` : ''}
+      `;
+      container.appendChild(summaryBar);
+
+      // --- SECTION 3: Filter Dashboard to All History Action Button ---
+      const actionRow = document.createElement('div');
+      actionRow.className = 'heat-actions-row';
+      actionRow.innerHTML = `
+        <button class="btn-heatmap-action" id="btn-heat-filter-all" title="View all historical sessions across the entire dashboard">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Filter Dashboard to All History</span>
+        </button>
+      `;
+      const btnFilterAll = actionRow.querySelector('#btn-heat-filter-all');
+      btnFilterAll.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-range') === 'all');
+        });
+        sendRangeRequest('all');
+        showToast('Dashboard filtered to All History');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      container.appendChild(actionRow);
     }
 
     function renderSessionsTable() {
