@@ -22,6 +22,10 @@
   <em>Unofficial, community-built extension. Not affiliated with or endorsed by Google. Local-only: no internet access.</em>
 </p>
 
+<p align="center">
+  <img src="assets/demo.png" alt="Antigravity Usage Intelligence Live Dashboard & Sidebar UI" width="100%" />
+</p>
+
 ---
 
 ## ⚡ Overview
