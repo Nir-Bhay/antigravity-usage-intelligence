@@ -5,6 +5,14 @@ All notable changes to the **Antigravity Usage Intelligence** extension will be 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] - 2026-09-07
+
+### Improved
+* **Marketplace Discovery & SEO Optimization**: Updated display name to `Antigravity Usage — Token Tracker & Quota Intelligence` to guarantee top-tier keyword matching across primary search queries (`Antigravity Usage`, `Token Tracker`, `Quota Intelligence`).
+* **High-Intent Search Tags**: Expanded keyword registry to capture `antigravity-usage`, `ag-usage`, `antigravity-quota`, `antigravity-token`, `antigravity-tracker`, and `quota-monitor`.
+* **Action-Oriented Marketplace Description**: Front-loaded primary benefits and search keywords into the extension summary.
+* **Integrated UI Visual Proof**: Bundled real UI demo screenshot into the official distribution package for offline marketplace previews.
+
 ---
 
 ## [1.0.6] - 2026-09-07

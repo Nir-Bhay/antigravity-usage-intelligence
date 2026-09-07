@@ -46,9 +46,9 @@ Ensure `package.json` contains all required metadata fields:
 | Field | Configured Value | Marketplace Requirement |
 | :--- | :--- | :--- |
 | `name` | `antigravity-usage-intelligence` | Lowercase alphanumeric + hyphens |
-| `displayName` | `Antigravity Usage Intelligence` | Clean human-readable title |
+| `displayName` | `Antigravity Usage — Token Tracker & Quota Intelligence` | Clean human-readable title |
 | `publisher` | `nirbhay-hiwse` | Matches publisher account ID |
-| `version` | `1.0.6` | Semantic versioning (`MAJOR.MINOR.PATCH`) |
+| `version` | `1.0.7` | Semantic versioning (`MAJOR.MINOR.PATCH`) |
 | `engines.vscode` | `^1.80.0` | Target VS Code engine version |
 | `icon` | `assets/icon.png` | **128x128px PNG** (strictly required) |
 | `categories` | `["AI", "Machine Learning", "Visualization", "Productivity"]` | Valid marketplace categories |
@@ -110,7 +110,7 @@ You can upload the pre-packaged `.vsix` file directly through the browser withou
 1. Open [Marketplace Management Portal](https://marketplace.visualstudio.com/manage).
 2. Click on your publisher name (`nirbhay-hiwse`).
 3. Click the **+ New extension** button (top right) and select **Visual Studio Code**.
-4. Drag and drop `antigravity-usage-intelligence-1.0.6.vsix` (located in this project root) into the upload box.
+4. Drag and drop `antigravity-usage-intelligence-1.0.7.vsix` (located in this project root) into the upload box.
 5. Click **Upload**.
 6. The marketplace will verify the extension package (status will show *Verifying*, typically completes within 2–5 minutes). Once verified, your extension is live on the Visual Studio Marketplace!
 
@@ -199,13 +199,13 @@ npm run package
 ```
 *(or run `npx --yes @vscode/vsce package --no-git-tag-version`)*
 
-This generates `antigravity-usage-intelligence-1.0.6.vsix` (~88 KB).
+This generates `antigravity-usage-intelligence-1.0.7.vsix` (~273 KB).
 
 ### Test Install VSIX in VS Code / Antigravity
 
 ```bash
 # In Antigravity or VS Code:
-code --install-extension antigravity-usage-intelligence-1.0.6.vsix
+code --install-extension antigravity-usage-intelligence-1.0.7.vsix
 ```
 
 Open your editor, verify that:
@@ -244,7 +244,7 @@ npm run publish:marketplace
 
 #### Option A: Publishing the pre-built `.vsix`
 ```bash
-npx --yes ovsx publish antigravity-usage-intelligence-1.0.6.vsix -p <YOUR_OPEN_VSX_TOKEN>
+npx --yes ovsx publish antigravity-usage-intelligence-1.0.7.vsix -p <YOUR_OPEN_VSX_TOKEN>
 ```
 
 #### Option B: Packaging and publishing in one command
@@ -268,10 +268,10 @@ To guarantee exact binary parity between VS Code Marketplace and Open VSX:
 npx --yes @vscode/vsce package --no-git-tag-version
 
 # 2. Publish to Microsoft Marketplace
-npx --yes @vscode/vsce publish --packagePath antigravity-usage-intelligence-1.0.6.vsix -p <AZURE_DEVOPS_PAT>
+npx --yes @vscode/vsce publish --packagePath antigravity-usage-intelligence-1.0.7.vsix -p <AZURE_DEVOPS_PAT>
 
 # 3. Publish identical package to Open VSX
-npx --yes ovsx publish antigravity-usage-intelligence-1.0.6.vsix -p <OPEN_VSX_TOKEN>
+npx --yes ovsx publish antigravity-usage-intelligence-1.0.7.vsix -p <OPEN_VSX_TOKEN>
 ```
 
 ---
