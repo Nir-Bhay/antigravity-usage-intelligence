@@ -245,13 +245,13 @@
       color-scheme: dark;
     }
 
-    /* Next-Level Dual Model Quota & Capacity Card (Compact & High-Density) */
+    /* Compact High-Density Model Quota Card */
     .quota-card {
       background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.8));
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.05);
       border-radius: 8px;
-      padding: 8px 12px;
+      padding: 7px 10px 8px;
       margin-bottom: 8px;
       position: relative;
       overflow: hidden;
@@ -264,7 +264,8 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: linear-gradient(90deg, #38bdf8, #a855f7, #34d399);
+      background: linear-gradient(90deg, #38bdf8, #a855f7);
+      opacity: 0.85;
     }
 
     .quota-top-bar {
@@ -272,32 +273,30 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 6px;
-      flex-wrap: wrap;
-      gap: 6px;
+      padding-bottom: 5px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      padding-bottom: 6px;
     }
 
     .quota-title-wrap {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .quota-bolt-icon {
       display: inline-flex;
       align-items: center;
       color: #fbbf24;
+      filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.4));
     }
 
     .quota-heading {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
       color: #f1f5f9;
       letter-spacing: -0.2px;
+      text-transform: uppercase;
+      opacity: 0.92;
     }
 
     .quota-status-badge {
@@ -308,7 +307,7 @@
       border-radius: 9999px;
       font-size: 9px;
       font-weight: 600;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.2px;
       display: inline-flex;
       align-items: center;
       gap: 3px;
@@ -320,231 +319,135 @@
       border-color: rgba(245, 158, 11, 0.4);
     }
 
-    .quota-subtext {
-      font-size: 10px;
-      color: var(--text-muted);
-      margin-top: 1px;
+    .quota-timer-wrap {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #38bdf8;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: rgba(56, 189, 248, 0.08);
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(56, 189, 248, 0.18);
+    }
+
+    .quota-models-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .quota-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 4px 6px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: background 0.15s ease, border-color 0.15s ease;
+      cursor: default;
+    }
+
+    .quota-row:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .quota-row-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .quota-row-label {
       display: flex;
       align-items: center;
       gap: 5px;
+      min-width: 0;
     }
 
-    .quota-sub-dot {
-      color: rgba(255, 255, 255, 0.3);
-    }
-
-    .quota-timer-box {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-
-    .quota-timer-label {
-      font-size: 8.5px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-    }
-
-    .quota-timer-val {
-      font-size: 11.5px;
-      font-weight: 700;
-      color: #38bdf8;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      margin-top: 1px;
-    }
-
-    .quota-models-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
-      gap: 8px;
-    }
-
-    .quota-model-card {
-      background: rgba(255, 255, 255, 0.025);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 6px 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: all 0.2s ease;
-      position: relative;
-    }
-
-    .quota-model-card:hover {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(255, 255, 255, 0.15);
-      transform: translateY(-1px);
-    }
-
-    .quota-gemini-card {
-      border-left: 3px solid #38bdf8;
-    }
-
-    .quota-claude-card {
-      border-left: 3px solid #a855f7;
-    }
-
-    .quota-ring-container {
-      position: relative;
-      width: 54px;
-      height: 54px;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .quota-ring-svg {
-      transform: rotate(-90deg);
-      overflow: visible;
-    }
-
-    .quota-ring-bg {
-      fill: none;
-      stroke: rgba(255, 255, 255, 0.05);
-      stroke-width: 4.5;
-    }
-
-    .quota-ring-bar {
-      fill: none;
-      stroke-width: 4.5;
-      stroke-linecap: round;
-      stroke-dasharray: 138.2;
-      stroke-dashoffset: 138.2;
-      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .quota-ring-inner {
-      position: absolute;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-
-    .quota-ring-pct {
-      font-size: 12px;
-      font-weight: 800;
+    .quota-dot {
+      font-size: 10px;
       line-height: 1;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
-    .quota-ring-lbl {
-      font-size: 8.5px;
-      color: var(--text-muted);
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      margin-top: 1px;
-    }
-
-    .quota-model-info {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-    }
-
-    .quota-model-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      flex-wrap: wrap;
-      min-width: 0;
-    }
-
-    .quota-brand-badge {
-      font-size: 9.5px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      border-radius: 4px;
-      padding: 1px 5px;
-    }
-
-    .gemini-badge {
-      background: rgba(56, 189, 248, 0.15);
+    .gemini-dot {
       color: #38bdf8;
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      text-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
     }
 
-    .claude-badge {
-      background: rgba(168, 85, 247, 0.15);
+    .claude-dot {
       color: #c084fc;
-      border: 1px solid rgba(168, 85, 247, 0.3);
+      text-shadow: 0 0 6px rgba(192, 132, 252, 0.6);
     }
 
-    .quota-active-chip {
-      font-size: 9.5px;
-      color: var(--text-muted);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    .quota-model-name {
+      font-weight: 600;
+      color: #e2e8f0;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: none;
     }
 
-    .quota-usage-row {
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
-      margin-top: 0px;
-    }
-
-    .quota-usage-val {
-      font-size: 14px;
-      font-weight: 800;
-      color: #f1f5f9;
+    .quota-row-val {
+      font-size: 10.5px;
+      font-weight: 700;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
-
-    .quota-usage-limit {
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-
-    .quota-model-meta {
-      font-size: 9px;
-      color: var(--text-muted);
-    }
-
-    .quota-status-pill {
+      color: #94a3b8;
       display: inline-flex;
       align-items: center;
       gap: 3px;
-      font-size: 8.5px;
-      font-weight: 600;
-      border-radius: 4px;
-      padding: 1px 5px;
-      margin-top: 1px;
-      width: fit-content;
     }
 
-    .quota-status-pill.safe {
-      background: rgba(16, 185, 129, 0.1);
+    .quota-row-val.safe {
       color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.25);
     }
 
-    .quota-status-pill.warn {
-      background: rgba(245, 158, 11, 0.12);
+    .quota-row-val.warn {
       color: #fbbf24;
-      border: 1px solid rgba(245, 158, 11, 0.3);
     }
 
-    .quota-status-pill.alert {
-      background: rgba(239, 68, 68, 0.15);
+    .quota-row-val.alert {
       color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+
+    .quota-track {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .quota-bar {
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gemini-bar {
+      background: linear-gradient(90deg, #38bdf8, #34d399);
+      box-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
+    }
+
+    .claude-bar {
+      background: linear-gradient(90deg, #a855f7, #f43f5e);
+      box-shadow: 0 0 6px rgba(168, 85, 247, 0.4);
+    }
+
+    .gemini-bar.warn, .claude-bar.warn {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+      box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+    }
+
+    .gemini-bar.alert, .claude-bar.alert {
+      background: linear-gradient(90deg, #ef4444, #f43f5e);
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
     }
 
     /* Model Breakdown Card & Dropdown */
@@ -662,25 +565,33 @@
     .model-metrics-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      gap: 6px;
     }
 
     .model-metric-tile {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border-color);
       border-radius: 6px;
-      padding: 8px 10px;
+      padding: 6px 9px;
       display: flex;
       flex-direction: column;
+      gap: 2px;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .model-metric-tile:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.12);
     }
 
     .model-metric-tile-header {
-      font-size: 10px;
+      font-size: 9.5px;
       color: var(--text-muted);
       display: flex;
       align-items: center;
       gap: 4px;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
+      font-weight: 500;
     }
 
     .model-metric-tile-val {
@@ -690,10 +601,41 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
-    .model-metric-tile-sub {
-      font-size: 9px;
+    .chart-collapse-toggle {
+      background: transparent;
+      border: none;
       color: var(--text-muted);
-      margin-top: 2px;
+      cursor: pointer;
+      padding: 3px 5px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .chart-collapse-toggle:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .chart-collapse-toggle svg {
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .chart-collapse-toggle.collapsed svg {
+      transform: rotate(-90deg);
+    }
+
+    .chart-collapsible-content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .chart-collapsible-content.collapsed {
+      display: none !important;
     }
 
     /* Model Selector Pills */
@@ -2373,16 +2315,13 @@
         grid-column: span 1;
       }
       .model-metrics-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: repeat(2, 1fr) !important;
       }
       .heat-status-grid {
         grid-template-columns: 1fr !important;
       }
       .drawer-specs-grid {
         grid-template-columns: 1fr !important;
-      }
-      .quota-model-card {
-        flex-wrap: wrap;
       }
     }
   </style>
@@ -2459,105 +2398,64 @@
     <button class="filter-btn" data-range="all">All Time</button>
   </div>
 
-  <!-- Rolling 5-Hour Model Quota & Capacity Card -->
+  <!-- Compact & High-Density Model Quota Card -->
   <div class="quota-card" id="quota-banner">
-    <!-- Top Bar: Title, Active Status, Countdown Timer -->
+    <!-- Top Bar: Title, Plan Badge, Countdown Timer -->
     <div class="quota-top-bar">
       <div class="quota-title-wrap">
-        <span class="quota-bolt-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-        <div>
-          <div class="quota-heading">
-            <span>Rolling 5-Hour Model Quota Window</span>
-            <span class="quota-status-badge" id="quota-status">Active Session</span>
+        <span class="quota-bolt-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </span>
+        <span class="quota-heading">Model Quota</span>
+        <span class="quota-status-badge" id="quota-status">Pro</span>
+      </div>
+      <div class="quota-timer-wrap" title="Sliding window reset countdown">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span id="quota-timer-text">--:--</span>
+      </div>
+    </div>
+
+    <!-- Models: High-Density Visual Progress Bars -->
+    <div class="quota-models-list">
+      <!-- Gemini Row -->
+      <div class="quota-row" id="card-gemini-quota">
+        <div class="quota-row-top">
+          <div class="quota-row-label">
+            <span class="quota-dot gemini-dot">✦</span>
+            <span class="quota-model-name" id="gemini-active-chip">Gemini 3.8 Flash</span>
           </div>
-          <div class="quota-subtext">
-            <span>Continuous sliding window</span>
-            <span class="quota-sub-dot">·</span>
-            <span id="quota-total-summary">Loading window activity...</span>
+          <div class="quota-row-val safe" id="gemini-status-pill">
+            <span id="gemini-usage-val">0%</span> used
           </div>
         </div>
+        <div class="quota-track">
+          <div class="quota-bar gemini-bar" id="gemini-ring-bar" style="width: 0%;"></div>
+        </div>
       </div>
-      <div class="quota-timer-box">
-        <div class="quota-timer-label">Window Resets In</div>
-        <div class="quota-timer-val" id="quota-timer">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span id="quota-timer-text">--:--</span>
+
+      <!-- Claude Row -->
+      <div class="quota-row" id="card-claude-quota">
+        <div class="quota-row-top">
+          <div class="quota-row-label">
+            <span class="quota-dot claude-dot">●</span>
+            <span class="quota-model-name" id="claude-active-chip">Claude Sonnet 4.6</span>
+          </div>
+          <div class="quota-row-val safe" id="claude-status-pill">
+            <span id="claude-usage-val">0%</span> used
+          </div>
+        </div>
+        <div class="quota-track">
+          <div class="quota-bar claude-bar" id="claude-ring-bar" style="width: 0%;"></div>
         </div>
       </div>
     </div>
 
-    <!-- Dual Circular Radial Gauges (Gemini Fleet vs Claude Fleet) -->
-    <div class="quota-models-grid">
-      <!-- Gemini Card -->
-      <div class="quota-model-card quota-gemini-card" id="card-gemini-quota">
-        <div class="quota-ring-container">
-          <svg class="quota-ring-svg" width="54" height="54" viewBox="0 0 54 54">
-            <defs>
-              <linearGradient id="gemini-ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#38bdf8" />
-                <stop offset="100%" stop-color="#34d399" />
-              </linearGradient>
-            </defs>
-            <circle class="quota-ring-bg" cx="27" cy="27" r="22" />
-            <circle class="quota-ring-bar" id="gemini-ring-bar" cx="27" cy="27" r="22" stroke="url(#gemini-ring-grad)" />
-          </svg>
-          <div class="quota-ring-inner">
-            <span class="quota-ring-pct" id="gemini-ring-pct" style="color:#38bdf8;">0%</span>
-            <span class="quota-ring-lbl">USED</span>
-          </div>
-        </div>
-        <div class="quota-model-info">
-          <div class="quota-model-header">
-            <span class="quota-brand-badge gemini-badge">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9L12 2Z"/></svg>
-              Google Gemini
-            </span>
-            <span class="quota-active-chip" id="gemini-active-chip">Gemini 3.8 Flash</span>
-          </div>
-          <div class="quota-usage-row">
-            <span class="quota-usage-val" id="gemini-usage-val">0</span>
-            <span class="quota-usage-limit">/ 100M quota</span>
-          </div>
-          <div class="quota-model-meta" id="gemini-meta">0 turns in window</div>
-          <div class="quota-status-pill safe" id="gemini-status-pill">● 100M Available</div>
-        </div>
-      </div>
-
-      <!-- Claude Card -->
-      <div class="quota-model-card quota-claude-card" id="card-claude-quota">
-        <div class="quota-ring-container">
-          <svg class="quota-ring-svg" width="54" height="54" viewBox="0 0 54 54">
-            <defs>
-              <linearGradient id="claude-ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#a855f7" />
-                <stop offset="100%" stop-color="#f43f5e" />
-              </linearGradient>
-            </defs>
-            <circle class="quota-ring-bg" cx="27" cy="27" r="22" />
-            <circle class="quota-ring-bar" id="claude-ring-bar" cx="27" cy="27" r="22" stroke="url(#claude-ring-grad)" />
-          </svg>
-          <div class="quota-ring-inner">
-            <span class="quota-ring-pct" id="claude-ring-pct" style="color:#c084fc;">0%</span>
-            <span class="quota-ring-lbl">USED</span>
-          </div>
-        </div>
-        <div class="quota-model-info">
-          <div class="quota-model-header">
-            <span class="quota-brand-badge claude-badge">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
-              Anthropic Claude
-            </span>
-            <span class="quota-active-chip" id="claude-active-chip">Claude Sonnet 4.6</span>
-          </div>
-          <div class="quota-usage-row">
-            <span class="quota-usage-val" id="claude-usage-val">0</span>
-            <span class="quota-usage-limit">/ 15M quota</span>
-          </div>
-          <div class="quota-model-meta" id="claude-meta">0 turns in window</div>
-          <div class="quota-status-pill safe" id="claude-status-pill">● 15M Available</div>
-        </div>
-      </div>
-    </div>
+    <!-- Hidden compatibility elements -->
+    <span id="quota-total-summary" style="display:none;"></span>
+    <span id="gemini-ring-pct" style="display:none;"></span>
+    <span id="claude-ring-pct" style="display:none;"></span>
+    <span id="gemini-meta" style="display:none;"></span>
+    <span id="claude-meta" style="display:none;"></span>
   </div>
 
   <!-- Hero KPI Cards (Refined Glassmorphic 7-Card Balanced Grid) -->
@@ -2715,30 +2613,6 @@
     </div>
   </div>
 
-  <!-- Model Intelligence & Reasoning Share -->
-  <div class="chart-container">
-    <div class="chart-header">
-      <div class="chart-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        <span>Model Intelligence & Reasoning Share</span>
-      </div>
-      <div class="model-header-controls">
-        <select id="model-select" class="model-select" title="Switch between All Models overview or inspect a specific model">
-          <option value="__ALL__">⚡ All Models (Fleet Overview)</option>
-        </select>
-        <div class="legend">
-          <div class="legend-item"><div class="legend-color" style="background:#f59e0b;"></div> Thinking</div>
-          <div class="legend-item"><div class="legend-color" style="background:#22c55e;"></div> Text Output</div>
-          <div class="legend-item"><div class="legend-color" style="background:#a855f7;"></div> Context Cache</div>
-          <div class="legend-item"><div class="legend-color" style="background:#38bdf8;"></div> Fresh Input</div>
-        </div>
-      </div>
-    </div>
-    <div class="models-container" id="models-container">
-      <!-- Populated via JS -->
-    </div>
-  </div>
-
   <!-- 24-Hour Peak Coding Hours Widget -->
   <div class="chart-container">
     <div class="chart-header">
@@ -2781,6 +2655,37 @@
     </div>
     <div class="heatmap-wrapper" id="heatmap-container">
       <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- Model Intelligence & Reasoning Share (Collapsible, Placed Below Heatmap) -->
+  <div class="chart-container" id="models-chart-card">
+    <div class="chart-header" style="cursor:pointer;" id="models-card-header" title="Click to collapse / expand">
+      <div class="chart-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <span>Model Intelligence & Reasoning Share</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="chart-collapse-toggle" id="toggle-models-card" title="Collapse / Expand">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="chart-collapsible-content" id="models-section-body">
+      <div class="model-header-controls" style="margin-bottom:6px;">
+        <select id="model-select" class="model-select" title="Switch between All Models overview or inspect a specific model">
+          <option value="__ALL__">⚡ All Models (Fleet Overview)</option>
+        </select>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-color" style="background:#f59e0b;"></div> Thinking</div>
+          <div class="legend-item"><div class="legend-color" style="background:#22c55e;"></div> Text Output</div>
+          <div class="legend-item"><div class="legend-color" style="background:#a855f7;"></div> Context Cache</div>
+          <div class="legend-item"><div class="legend-color" style="background:#38bdf8;"></div> Fresh Input</div>
+        </div>
+      </div>
+      <div class="models-container" id="models-container">
+        <!-- Populated via JS -->
+      </div>
     </div>
   </div>
 
@@ -3311,27 +3216,29 @@
     function updateQuotaCard(q, liveQuota) {
       if (!q && !liveQuota) return;
 
-      // Status badge, summary, timer elements
       const statusEl = document.getElementById('quota-status');
-      const summaryEl = document.getElementById('quota-total-summary');
       const timerEl = document.getElementById('quota-timer-text');
+      const gemBar = document.getElementById('gemini-ring-bar');
+      const gemChip = document.getElementById('gemini-active-chip');
+      const gemVal = document.getElementById('gemini-usage-val');
+      const gemPill = document.getElementById('gemini-status-pill');
+      const gemCard = document.getElementById('card-gemini-quota');
+
+      const cldBar = document.getElementById('claude-ring-bar');
+      const cldChip = document.getElementById('claude-active-chip');
+      const cldVal = document.getElementById('claude-usage-val');
+      const cldPill = document.getElementById('claude-status-pill');
+      const cldCard = document.getElementById('card-claude-quota');
 
       if (liveQuota && liveQuota.is_live) {
         if (statusEl) {
-          statusEl.innerHTML = `● ${escapeHtml(liveQuota.tier_name || 'Google AI Pro')} (Official)`;
-          statusEl.className = 'quota-status-badge' + ((liveQuota.gemini?.used_pct || 0) > 85 ? ' high-usage' : '');
-          statusEl.style.background = 'rgba(16, 185, 129, 0.15)';
-          statusEl.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-          statusEl.style.color = '#34d399';
+          const tier = liveQuota.tier_name ? liveQuota.tier_name.replace(/^Google\s+/i, '') : 'Pro';
+          statusEl.textContent = tier;
+          statusEl.title = `${liveQuota.tier_name || 'Google AI Pro'} (${liveQuota.user_email || 'Active Account'})`;
           if (liveQuota.stale) {
-            statusEl.innerHTML += ' · Stale';
-            statusEl.style.opacity = '0.75';
-            statusEl.title = 'Last known quota — live refresh failed. Showing cached reading.';
+            statusEl.textContent += ' · Cached';
+            statusEl.style.opacity = '0.8';
           }
-        }
-
-        if (summaryEl) {
-          summaryEl.innerHTML = `<span style="color:#f1f5f9; font-weight:600;">${escapeHtml(liveQuota.user_name || 'Active User')}</span> <span class="quota-sub-dot">·</span> <span style="color:#38bdf8;">${liveQuota.prompt_credits ?? 500} Prompt Credits</span> <span class="quota-sub-dot">·</span> <span style="color:#a855f7;">${liveQuota.flow_credits ?? 100} Flow Credits</span>`;
         }
 
         if (timerEl) {
@@ -3345,66 +3252,38 @@
               const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
               timerEl.textContent = `${hrs}h ${mins}m`;
             } else {
-              timerEl.textContent = 'Active Pool';
+              timerEl.textContent = 'Active';
             }
           } else {
-            timerEl.textContent = 'Active Pool';
+            timerEl.textContent = 'Active';
           }
         }
 
         // 1. Google Gemini Live Quota
         const gem = liveQuota.gemini;
         if (gem) {
-          const gemPct = Math.min(100, Math.max(0, gem.used_pct || 0));
-          const gemRemPct = Math.min(100, Math.max(0, gem.remaining_pct || 0));
-          const gemBar = document.getElementById('gemini-ring-bar');
-          const gemPctEl = document.getElementById('gemini-ring-pct');
-          const gemChip = document.getElementById('gemini-active-chip');
-          const gemUsage = document.getElementById('gemini-usage-val');
-          const gemMeta = document.getElementById('gemini-meta');
-          const gemPill = document.getElementById('gemini-status-pill');
-
+          const gemPct = Math.min(100, Math.max(0, Math.round(gem.used_pct || 0)));
+          const gemRemPct = Math.min(100, Math.max(0, Math.round(gem.remaining_pct || 0)));
+          if (gemChip) gemChip.textContent = gem.label || 'Gemini 3.8 Flash';
+          if (gemVal) gemVal.textContent = `${gemPct}%`;
           if (gemBar) {
-            gemBar.style.strokeDashoffset = 138.2 * (1 - gemPct / 100);
-          }
-          if (gemPctEl) {
-            gemPctEl.textContent = `${gemPct}%`;
-          }
-          if (gemChip) {
-            gemChip.textContent = gem.label || 'Gemini 3.8 Flash';
-          }
-          if (gemUsage) {
-            gemUsage.textContent = `${gemPct}%`;
-          }
-          const gemLimit = document.querySelector('#card-gemini-quota .quota-usage-limit');
-          if (gemLimit) gemLimit.textContent = '/ active pool';
-          if (gemMeta) {
-            gemMeta.textContent = `${gemRemPct}% available capacity`;
+            gemBar.style.width = `${Math.max(2, gemPct)}%`;
+            gemBar.className = 'quota-bar gemini-bar' + (gemPct >= 90 ? ' alert' : gemPct >= 70 ? ' warn' : '');
           }
           if (gemPill) {
-            if (gemRemPct <= 15) {
-              gemPill.className = 'quota-status-pill alert';
-              gemPill.textContent = `⚠️ ${gemRemPct}% Left`;
-            } else if (gemRemPct <= 40) {
-              gemPill.className = 'quota-status-pill warn';
-              gemPill.textContent = `● ${gemRemPct}% Remaining`;
-            } else {
-              gemPill.className = 'quota-status-pill safe';
-              gemPill.textContent = `● ${gemRemPct}% Available`;
-            }
+            gemPill.className = 'quota-row-val ' + (gemPct >= 90 ? 'alert' : gemPct >= 70 ? 'warn' : 'safe');
           }
-
-          const gemCard = document.getElementById('card-gemini-quota');
           if (gemCard) {
             setupBarTooltip(gemCard, () => `
-              <div style="font-weight:700; color:#38bdf8; margin-bottom:4px; font-size:12px;">✨ Live Google Gemini Pool (${escapeHtml(liveQuota.tier_name)})</div>
-              <div style="font-size:11px; color:#f1f5f9; margin-bottom:2px;">
-                Pool Capacity: <strong>${gemRemPct}% Available</strong> (${gemPct}% Used)
+              <div style="font-weight:700; color:#38bdf8; margin-bottom:3px; font-size:11.5px;">✦ Google Gemini (${escapeHtml(liveQuota.tier_name || 'AI Pro')})</div>
+              <div style="font-size:11px; color:#f1f5f9; margin-bottom:3px;">
+                Capacity: <strong>${gemRemPct}% Free</strong> (${gemPct}% used)
               </div>
-              <div style="font-size:10px; color:var(--text-muted);">
+              <div style="font-size:10px; color:var(--text-muted); line-height:1.4;">
                 Model: <span style="color:#fbbf24;">${escapeHtml(gem.label)}</span><br>
-                Official Reset: ${gem.reset_time ? new Date(gem.reset_time).toLocaleTimeString() : 'Continuous sliding'}<br>
-                Account: ${escapeHtml(liveQuota.user_email || 'Authenticated')}
+                Reset: ${gem.reset_time ? new Date(gem.reset_time).toLocaleTimeString() : 'Continuous sliding'}<br>
+                Account: ${escapeHtml(liveQuota.user_name || '')} (${escapeHtml(liveQuota.user_email || '')})<br>
+                Credits: ${liveQuota.prompt_credits ?? 500} Prompt · ${liveQuota.flow_credits ?? 100} Flow
               </div>
             `);
           }
@@ -3413,56 +3292,28 @@
         // 2. Anthropic Claude Live Quota
         const cld = liveQuota.claude;
         if (cld) {
-          const cldPct = Math.min(100, Math.max(0, cld.used_pct || 0));
-          const cldRemPct = Math.min(100, Math.max(0, cld.remaining_pct || 0));
-          const cldBar = document.getElementById('claude-ring-bar');
-          const cldPctEl = document.getElementById('claude-ring-pct');
-          const cldChip = document.getElementById('claude-active-chip');
-          const cldUsage = document.getElementById('claude-usage-val');
-          const cldMeta = document.getElementById('claude-meta');
-          const cldPill = document.getElementById('claude-status-pill');
-
+          const cldPct = Math.min(100, Math.max(0, Math.round(cld.used_pct || 0)));
+          const cldRemPct = Math.min(100, Math.max(0, Math.round(cld.remaining_pct || 0)));
+          if (cldChip) cldChip.textContent = cld.label || 'Claude Sonnet 4.6';
+          if (cldVal) cldVal.textContent = `${cldPct}%`;
           if (cldBar) {
-            cldBar.style.strokeDashoffset = 138.2 * (1 - cldPct / 100);
-          }
-          if (cldPctEl) {
-            cldPctEl.textContent = `${cldPct}%`;
-          }
-          if (cldChip) {
-            cldChip.textContent = cld.label || 'Claude Opus 4.6';
-          }
-          if (cldUsage) {
-            cldUsage.textContent = `${cldPct}%`;
-          }
-          const cldLimit = document.querySelector('#card-claude-quota .quota-usage-limit');
-          if (cldLimit) cldLimit.textContent = '/ active pool';
-          if (cldMeta) {
-            cldMeta.textContent = `${cldRemPct}% available capacity`;
+            cldBar.style.width = `${Math.max(2, cldPct)}%`;
+            cldBar.className = 'quota-bar claude-bar' + (cldPct >= 90 ? ' alert' : cldPct >= 70 ? ' warn' : '');
           }
           if (cldPill) {
-            if (cldRemPct <= 15) {
-              cldPill.className = 'quota-status-pill alert';
-              cldPill.textContent = `⚠️ ${cldRemPct}% Left`;
-            } else if (cldRemPct <= 40) {
-              cldPill.className = 'quota-status-pill warn';
-              cldPill.textContent = `● ${cldRemPct}% Remaining`;
-            } else {
-              cldPill.className = 'quota-status-pill safe';
-              cldPill.textContent = `● ${cldRemPct}% Available`;
-            }
+            cldPill.className = 'quota-row-val ' + (cldPct >= 90 ? 'alert' : cldPct >= 70 ? 'warn' : 'safe');
           }
-
-          const cldCard = document.getElementById('card-claude-quota');
           if (cldCard) {
             setupBarTooltip(cldCard, () => `
-              <div style="font-weight:700; color:#c084fc; margin-bottom:4px; font-size:12px;">🟣 Live Anthropic Claude Pool (${escapeHtml(liveQuota.tier_name)})</div>
-              <div style="font-size:11px; color:#f1f5f9; margin-bottom:2px;">
-                Pool Capacity: <strong>${cldRemPct}% Available</strong> (${cldPct}% Used)
+              <div style="font-weight:700; color:#c084fc; margin-bottom:3px; font-size:11.5px;">● Anthropic Claude (${escapeHtml(liveQuota.tier_name || 'AI Pro')})</div>
+              <div style="font-size:11px; color:#f1f5f9; margin-bottom:3px;">
+                Capacity: <strong>${cldRemPct}% Free</strong> (${cldPct}% used)
               </div>
-              <div style="font-size:10px; color:var(--text-muted);">
+              <div style="font-size:10px; color:var(--text-muted); line-height:1.4;">
                 Model: <span style="color:#c084fc;">${escapeHtml(cld.label)}</span><br>
-                Official Reset: ${cld.reset_time ? new Date(cld.reset_time).toLocaleTimeString() : 'Continuous sliding'}<br>
-                Account: ${escapeHtml(liveQuota.user_email || 'Authenticated')}
+                Reset: ${cld.reset_time ? new Date(cld.reset_time).toLocaleTimeString() : 'Continuous sliding'}<br>
+                Account: ${escapeHtml(liveQuota.user_name || '')} (${escapeHtml(liveQuota.user_email || '')})<br>
+                Credits: ${liveQuota.prompt_credits ?? 500} Prompt · ${liveQuota.flow_credits ?? 100} Flow
               </div>
             `);
           }
@@ -3470,131 +3321,57 @@
         return;
       }
 
-      // Status badge
+      // Fallback Estimate Mode
       if (statusEl) {
-        statusEl.textContent = q.status || (q.is_active ? 'Active Session' : 'Healthy');
-        statusEl.className = 'quota-status-badge' + (q.status === 'High Usage' ? ' high-usage' : '');
+        statusEl.textContent = 'Estimated';
+        statusEl.className = 'quota-status-badge';
       }
-
-      // Summary text
-      if (summaryEl) {
-        summaryEl.textContent = `${formatNumber(q.window_tokens || 0)} tokens / ${(q.window_turns || 0).toLocaleString()} turns (${q.window_sessions || 0} session${(q.window_sessions || 0) === 1 ? '' : 's'})`;
-      }
-
-      // Countdown Timer
       if (timerEl) {
-        timerEl.textContent = q.reset_countdown || '--:--';
+        timerEl.textContent = q.reset_countdown || '5h window';
       }
 
-      // 1. Google Gemini Family Gauge (Fallback)
       const gem = q.gemini || { tokens: 0, turns: 0, sessions: 0, limit_tokens: 100000000, pct: 0, active_model: 'Gemini 3.8 Flash' };
-      const gemPct = Math.min(100, Math.max(0, gem.pct || 0));
-      const gemBar = document.getElementById('gemini-ring-bar');
-      const gemPctEl = document.getElementById('gemini-ring-pct');
-      const gemChip = document.getElementById('gemini-active-chip');
-      const gemUsage = document.getElementById('gemini-usage-val');
-      const gemMeta = document.getElementById('gemini-meta');
-      const gemPill = document.getElementById('gemini-status-pill');
-
+      const gemPct = Math.min(100, Math.max(0, Math.round(gem.pct || 0)));
+      if (gemChip) gemChip.textContent = gem.active_model || 'Gemini 3.8 Flash';
+      if (gemVal) gemVal.textContent = `${gemPct}%`;
       if (gemBar) {
-        const offset = 138.2 * (1 - gemPct / 100);
-        gemBar.style.strokeDashoffset = offset;
-      }
-      if (gemPctEl) {
-        gemPctEl.textContent = `${Math.round(gemPct)}%`;
-      }
-      if (gemChip) {
-        gemChip.textContent = gem.active_model || 'Gemini 3.8 Flash';
-      }
-      if (gemUsage) {
-        gemUsage.textContent = formatNumber(gem.tokens || 0);
-      }
-      if (gemMeta) {
-        gemMeta.textContent = `${(gem.turns || 0).toLocaleString()} turns · ${gem.sessions || 0} session${(gem.sessions || 0) === 1 ? '' : 's'}`;
+        gemBar.style.width = `${Math.max(2, gemPct)}%`;
+        gemBar.className = 'quota-bar gemini-bar' + (gemPct >= 90 ? ' alert' : gemPct >= 70 ? ' warn' : '');
       }
       if (gemPill) {
-        const remaining = Math.max(0, (gem.limit_tokens || 100000000) - (gem.tokens || 0));
-        if (gemPct >= 85) {
-          gemPill.className = 'quota-status-pill alert';
-          gemPill.textContent = `⚠️ ${formatNumber(remaining)} Left (${Math.round(100 - gemPct)}%)`;
-        } else if (gemPct >= 60) {
-          gemPill.className = 'quota-status-pill warn';
-          gemPill.textContent = `● ${formatNumber(remaining)} Remaining`;
-        } else {
-          gemPill.className = 'quota-status-pill safe';
-          gemPill.textContent = `● ${formatNumber(remaining)} Available`;
-        }
+        gemPill.className = 'quota-row-val ' + (gemPct >= 90 ? 'alert' : gemPct >= 70 ? 'warn' : 'safe');
       }
-
-      // 2. Anthropic Claude Family Gauge (Fallback)
-      const cld = q.claude || { tokens: 0, turns: 0, sessions: 0, limit_tokens: 15000000, pct: 0, active_model: 'Claude Sonnet 4.6' };
-      const cldPct = Math.min(100, Math.max(0, cld.pct || 0));
-      const cldBar = document.getElementById('claude-ring-bar');
-      const cldPctEl = document.getElementById('claude-ring-pct');
-      const cldChip = document.getElementById('claude-active-chip');
-      const cldUsage = document.getElementById('claude-usage-val');
-      const cldMeta = document.getElementById('claude-meta');
-      const cldPill = document.getElementById('claude-status-pill');
-
-      if (cldBar) {
-        const offset = 138.2 * (1 - cldPct / 100);
-        cldBar.style.strokeDashoffset = offset;
-      }
-      if (cldPctEl) {
-        cldPctEl.textContent = `${Math.round(cldPct)}%`;
-      }
-      if (cldChip) {
-        cldChip.textContent = cld.active_model || 'Claude Sonnet 4.6';
-      }
-      if (cldUsage) {
-        cldUsage.textContent = formatNumber(cld.tokens || 0);
-      }
-      if (cldMeta) {
-        if ((cld.sessions || 0) > 0) {
-          cldMeta.textContent = `${(cld.turns || 0).toLocaleString()} turns · ${cld.sessions} session${cld.sessions === 1 ? '' : 's'}`;
-        } else {
-          cldMeta.textContent = `0 turns in current 5h window`;
-        }
-      }
-      if (cldPill) {
-        const remaining = Math.max(0, (cld.limit_tokens || 15000000) - (cld.tokens || 0));
-        if (cldPct >= 85) {
-          cldPill.className = 'quota-status-pill alert';
-          cldPill.textContent = `⚠️ ${formatNumber(remaining)} Left (${Math.round(100 - cldPct)}%)`;
-        } else if (cldPct >= 60) {
-          cldPill.className = 'quota-status-pill warn';
-          cldPill.textContent = `● ${formatNumber(remaining)} Remaining`;
-        } else {
-          cldPill.className = 'quota-status-pill safe';
-          cldPill.textContent = `● ${formatNumber(remaining)} Available`;
-        }
-      }
-
-      // Tooltips
-      const gemCard = document.getElementById('card-gemini-quota');
       if (gemCard) {
         setupBarTooltip(gemCard, () => `
-          <div style="font-weight:700; color:#38bdf8; margin-bottom:4px; font-size:12px;">✨ Google Gemini Fleet Quota</div>
+          <div style="font-weight:700; color:#38bdf8; margin-bottom:3px; font-size:11.5px;">✦ Gemini Fleet (Local Estimate)</div>
           <div style="font-size:11px; color:#f1f5f9; margin-bottom:2px;">
-            5-Hour Consumption: <strong>${formatNumber(gem.tokens || 0)}</strong> / ${formatNumber(gem.limit_tokens || 100000000)} (${Math.round(gemPct)}%)
+            5h Window: <strong>${formatNumber(gem.tokens || 0)}</strong> / ${formatNumber(gem.limit_tokens || 100000000)} (${gemPct}%)
           </div>
           <div style="font-size:10px; color:var(--text-muted);">
-            Active Model: <span style="color:#fbbf24;">${escapeHtml(gem.active_model)}</span><br>
-            Baseline reset window: 5 hours continuous sliding
+            Active Model: <span style="color:#fbbf24;">${escapeHtml(gem.active_model)}</span> · ${(gem.turns || 0).toLocaleString()} turns
           </div>
         `);
       }
 
-      const cldCard = document.getElementById('card-claude-quota');
+      const cld = q.claude || { tokens: 0, turns: 0, sessions: 0, limit_tokens: 15000000, pct: 0, active_model: 'Claude Sonnet 4.6' };
+      const cldPct = Math.min(100, Math.max(0, Math.round(cld.pct || 0)));
+      if (cldChip) cldChip.textContent = cld.active_model || 'Claude Sonnet 4.6';
+      if (cldVal) cldVal.textContent = `${cldPct}%`;
+      if (cldBar) {
+        cldBar.style.width = `${Math.max(2, cldPct)}%`;
+        cldBar.className = 'quota-bar claude-bar' + (cldPct >= 90 ? ' alert' : cldPct >= 70 ? ' warn' : '');
+      }
+      if (cldPill) {
+        cldPill.className = 'quota-row-val ' + (cldPct >= 90 ? 'alert' : cldPct >= 70 ? 'warn' : 'safe');
+      }
       if (cldCard) {
         setupBarTooltip(cldCard, () => `
-          <div style="font-weight:700; color:#c084fc; margin-bottom:4px; font-size:12px;">🟣 Anthropic Claude Fleet Quota</div>
+          <div style="font-weight:700; color:#c084fc; margin-bottom:3px; font-size:11.5px;">● Claude Fleet (Local Estimate)</div>
           <div style="font-size:11px; color:#f1f5f9; margin-bottom:2px;">
-            5-Hour Consumption: <strong>${formatNumber(cld.tokens || 0)}</strong> / ${formatNumber(cld.limit_tokens || 15000000)} (${Math.round(cldPct)}%)
+            5h Window: <strong>${formatNumber(cld.tokens || 0)}</strong> / ${formatNumber(cld.limit_tokens || 15000000)} (${cldPct}%)
           </div>
           <div style="font-size:10px; color:var(--text-muted);">
-            Active Model: <span style="color:#c084fc;">${escapeHtml(cld.active_model)}</span><br>
-            Anthropic rate limit pool: 5 hours continuous sliding
+            Active Model: <span style="color:#c084fc;">${escapeHtml(cld.active_model)}</span> · ${(cld.turns || 0).toLocaleString()} turns
           </div>
         `);
       }
@@ -3960,36 +3737,32 @@
         </div>
 
         <div class="model-metrics-grid">
-          <div class="model-metric-tile" style="border-left: 2px solid #f59e0b;">
+          <div class="model-metric-tile" title="Thinking / Reasoning: ${formatNumber(thinkingTokens)} (${thinkShareOfOutput}% of generation)">
             <div class="model-metric-tile-header">
-              <span style="color:#f59e0b;">●</span> Thinking / Reasoning
+              <span style="color:#f59e0b;">●</span> Thinking
             </div>
             <div class="model-metric-tile-val" style="color:#fbbf24;">${formatNumber(thinkingTokens)}</div>
-            <div class="model-metric-tile-sub">${thinkShareOfOutput}% of generation</div>
           </div>
 
-          <div class="model-metric-tile" style="border-left: 2px solid #a855f7;">
+          <div class="model-metric-tile" title="Context Cache: ${formatNumber(cachedTokens)} (${cacheEfficiency}% cache ratio)">
             <div class="model-metric-tile-header">
-              <span style="color:#a855f7;">●</span> Context Cache Read
+              <span style="color:#a855f7;">●</span> Cache Read
             </div>
             <div class="model-metric-tile-val" style="color:#c084fc;">${formatNumber(cachedTokens)}</div>
-            <div class="model-metric-tile-sub">${cacheEfficiency}% cache ratio</div>
           </div>
 
-          <div class="model-metric-tile" style="border-left: 2px solid #22c55e;">
+          <div class="model-metric-tile" title="Text Generation: ${formatNumber(pureOutput)} (Standard output)">
             <div class="model-metric-tile-header">
-              <span style="color:#22c55e;">●</span> Text Generation
+              <span style="color:#22c55e;">●</span> Text Output
             </div>
             <div class="model-metric-tile-val" style="color:#4ade80;">${formatNumber(pureOutput)}</div>
-            <div class="model-metric-tile-sub">Standard response</div>
           </div>
 
-          <div class="model-metric-tile" style="border-left: 2px solid #38bdf8;">
+          <div class="model-metric-tile" title="Fresh Input: ${formatNumber(inputTokens)} (Uncached prompts)">
             <div class="model-metric-tile-header">
               <span style="color:#38bdf8;">●</span> Fresh Input
             </div>
             <div class="model-metric-tile-val" style="color:#7dd3fc;">${formatNumber(inputTokens)}</div>
-            <div class="model-metric-tile-sub">Uncached prompts</div>
           </div>
         </div>
       `;
@@ -4685,6 +4458,19 @@
           const tableEl = document.getElementById('sessions-table');
           if (tableEl) tableEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
+      });
+    }
+
+    let isModelsCollapsed = false;
+    const modelsHeader = document.getElementById('models-card-header');
+    if (modelsHeader) {
+      modelsHeader.addEventListener('click', (e) => {
+        if (e.target.closest('select') || e.target.closest('button.btn-filter-model-sessions')) return;
+        isModelsCollapsed = !isModelsCollapsed;
+        const body = document.getElementById('models-section-body');
+        const btn = document.getElementById('toggle-models-card');
+        if (body) body.classList.toggle('collapsed', isModelsCollapsed);
+        if (btn) btn.classList.toggle('collapsed', isModelsCollapsed);
       });
     }
 

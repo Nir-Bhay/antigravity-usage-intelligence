@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.4] - 2026-09-07
+
+### Improved
+* **Compact Model Intelligence & Reasoning Share**: Relocated the fleet model intelligence card below the Agent Activity Heatmap for a more logical analytics flow.
+* **Collapsible Model Analytics**: Added an interactive accordion collapse/expand toggle to the Model Intelligence card header, saving vertical screen space in narrow sidebars.
+* **Streamlined Metric Tiles**: Removed colored left borders from metric tiles and removed redundant subtitles ("59.0% of generation", "90.5% cache ratio", etc.) in favor of clean numbers and rich hover tooltips.
+* **Ultra-Compact 85px Rolling Quota Widget**: Transformed the bulky dual 54px radial circles into high-density horizontal progress bars with model chips, live % bars, and countdown timers.
+
+---
+
 ## [1.0.3] - 2026-09-07
 
 ### Fixed
