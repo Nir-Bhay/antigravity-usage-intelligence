@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.6] - 2026-09-07
+
+### Added
+* **First-Class Light Theme Support**: Complete, adaptive light theme implementation across both the Sidebar extension and the Full Tab dashboard in Antigravity IDE and VS Code.
+* **Real-Time Dynamic Theme Sync**: Automatically detects light themes (`body.vscode-light`, `data-vscode-theme-kind`, or computed luminance) and listens via `MutationObserver` to switch themes live without requiring a reload.
+
+### Improved
+* **Adaptive Model Quota & Hero KPI Cards**: Cards seamlessly transition to clean white card surfaces (`#ffffff`, `#e2e8f0` borders, subtle box shadows) with high-contrast text and vivid metric accent colors.
+* **GitHub Canonical Light Heatmap**: Empty contribution cells now render GitHub-standard `#ebedf0` tiles with subtle borders, eliminating floating green squares on blank white space. Contribution greens are mapped to GitHub's official light theme green palette (`#9be9a8` to `#216e39`).
+* **High-Contrast Heatmap Summary Bar**: All summary metrics (Active Days, Consistency %, Peak Day, and Streaks) now feature bold, readable contrast on light canvases.
+* **Light Theme Model Dropdowns & Controls**: `.model-select` and model intelligence breakdown now feature crisp white controls, soft blue focus rings, and readable text instead of pitch-black blocks.
+* **Preserved Dark Theme Excellence**: All glassmorphic styling, neon glows, and dark gradients remain 100% preserved in dark mode.
+
+---
+
 ## [1.0.5] - 2026-09-07
 
 ### Improved

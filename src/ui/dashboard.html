@@ -881,6 +881,13 @@
       color: #38bdf8;
     }
 
+    .val-input { color: #93c5fd; }
+    .val-output { color: #4ade80; }
+    .val-cached { color: #c084fc; }
+    .val-cache-rate { color: #34d399; }
+    .val-thinking { color: #fbbf24; }
+    .val-tool-calls { color: #fb7185; }
+
     .kpi-sub {
       font-size: 9px;
       color: var(--text-muted);
@@ -2247,20 +2254,1060 @@
       .heat-toggle-group { flex-wrap: wrap; }
     }
 
-    /* Ultra-narrow sidebar (<= 360px): single-column stacking */
-    @media (max-width: 360px) {
-      .kpi-grid {
-        grid-template-columns: 1fr !important;
-      }
-      .kpi-card-hero {
-        grid-column: span 1;
-      }
-      .model-metrics-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-      }
-      .drawer-specs-grid {
-        grid-template-columns: 1fr !important;
-      }
+    /* ==========================================================================
+       FIRST-CLASS LIGHT THEME ADAPTATION (VS Code / Antigravity Light Themes)
+       ========================================================================== */
+    body.vscode-light,
+    body.theme-light,
+    html[data-vscode-theme-kind="vscode-light"] body {
+      --bg-primary: var(--vscode-editor-background, #ffffff);
+      --bg-secondary: var(--vscode-sideBar-background, #f8fafc);
+      --bg-card: #ffffff;
+      --bg-card-hover: #f1f5f9;
+      --border-color: var(--vscode-widget-border, #e2e8f0);
+      --text-primary: var(--vscode-foreground, #0f172a);
+      --text-muted: var(--vscode-descriptionForeground, #64748b);
+      --accent-blue: #0284c7;
+      --accent-purple: #9333ea;
+      --accent-green: #16a34a;
+      --accent-amber: #d97706;
+      --accent-rose: #e11d48;
+      --accent-emerald: #059669;
+    }
+
+    /* Cards & Containers */
+    body.vscode-light .chart-container,
+    body.theme-light .chart-container,
+    html[data-vscode-theme-kind="vscode-light"] body .chart-container {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Model Quota Card in Light Mode */
+    body.vscode-light .quota-card,
+    body.theme-light .quota-card,
+    html[data-vscode-theme-kind="vscode-light"] body .quota-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    body.vscode-light .quota-card::before,
+    body.theme-light .quota-card::before,
+    html[data-vscode-theme-kind="vscode-light"] body .quota-card::before {
+      background: linear-gradient(90deg, #0284c7, #9333ea);
+      opacity: 0.9;
+    }
+
+    body.vscode-light .quota-top-bar,
+    body.theme-light .quota-top-bar,
+    html[data-vscode-theme-kind="vscode-light"] body .quota-top-bar {
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    body.vscode-light .quota-heading,
+    body.theme-light .quota-heading,
+    html[data-vscode-theme-kind="vscode-light"] body .quota-heading {
+      color: #0f172a;
+    }
+
+    body.vscode-light .quota-timer-wrap,
+    body.theme-light .quota-timer-wrap,
+    html[data-vscode-theme-kind="vscode-light"] body .quota-timer-wrap {
+      background: #f0f9ff;
+      border-color: #bae6fd;
+      color: #0284c7;
+    }
+
+    body.vscode-light .quota-row,
+    body.theme-light .quota-row,
+    html[data-vscode-theme-kind="vscode-light"] body .quota-row {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    body.vscode-light .quota-row:hover,
+    body.theme-light .quota-row:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .quota-row:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    body.vscode-light .quota-model-name,
+    body.theme-light .quota-model-name,
+    html[data-vscode-theme-kind="vscode-light"] body .quota-model-name {
+      color: #1e293b;
+    }
+
+    body.vscode-light .quota-track,
+    body.theme-light .quota-track,
+    html[data-vscode-theme-kind="vscode-light"] body .quota-track {
+      background: #e2e8f0;
+    }
+
+    /* KPI Cards in Light Mode */
+    body.vscode-light .kpi-card,
+    body.theme-light .kpi-card,
+    html[data-vscode-theme-kind="vscode-light"] body .kpi-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    body.vscode-light .kpi-card:hover,
+    body.theme-light .kpi-card:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .kpi-card:hover {
+      background: #f8fafc;
+      border-color: #0284c7;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+    }
+
+    body.vscode-light .kpi-card-hero,
+    body.theme-light .kpi-card-hero,
+    html[data-vscode-theme-kind="vscode-light"] body .kpi-card-hero {
+      background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+      border: 1px solid #bae6fd;
+    }
+
+    body.vscode-light .kpi-card-hero:hover,
+    body.theme-light .kpi-card-hero:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .kpi-card-hero:hover {
+      border-color: #0284c7;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.15);
+    }
+
+    body.vscode-light .kpi-value,
+    body.theme-light .kpi-value,
+    html[data-vscode-theme-kind="vscode-light"] body .kpi-value {
+      color: #0f172a;
+    }
+
+    body.vscode-light .kpi-card-hero .kpi-value,
+    body.theme-light .kpi-card-hero .kpi-value,
+    html[data-vscode-theme-kind="vscode-light"] body .kpi-card-hero .kpi-value {
+      color: #0284c7;
+    }
+
+    body.vscode-light .kpi-title,
+    body.theme-light .kpi-title,
+    html[data-vscode-theme-kind="vscode-light"] body .kpi-title {
+      color: #64748b;
+    }
+
+    body.vscode-light .kpi-sub,
+    body.theme-light .kpi-sub,
+    html[data-vscode-theme-kind="vscode-light"] body .kpi-sub {
+      color: #64748b;
+    }
+
+    /* High-contrast KPI values for light mode */
+    body.vscode-light #val-input-tokens,
+    body.theme-light #val-input-tokens,
+    html[data-vscode-theme-kind="vscode-light"] body #val-input-tokens {
+      color: #2563eb !important;
+    }
+
+    body.vscode-light #val-output-tokens,
+    body.theme-light #val-output-tokens,
+    html[data-vscode-theme-kind="vscode-light"] body #val-output-tokens {
+      color: #16a34a !important;
+    }
+
+    body.vscode-light #val-cached-tokens,
+    body.theme-light #val-cached-tokens,
+    html[data-vscode-theme-kind="vscode-light"] body #val-cached-tokens {
+      color: #9333ea !important;
+    }
+
+    body.vscode-light #val-cache-rate,
+    body.theme-light #val-cache-rate,
+    html[data-vscode-theme-kind="vscode-light"] body #val-cache-rate {
+      color: #059669 !important;
+    }
+
+    body.vscode-light #val-thinking-tokens,
+    body.theme-light #val-thinking-tokens,
+    html[data-vscode-theme-kind="vscode-light"] body #val-thinking-tokens {
+      color: #d97706 !important;
+    }
+
+    body.vscode-light #val-tool-calls,
+    body.theme-light #val-tool-calls,
+    html[data-vscode-theme-kind="vscode-light"] body #val-tool-calls {
+      color: #e11d48 !important;
+    }
+
+    /* KPI Chips in Light Mode */
+    body.vscode-light .kpi-chip.live,
+    body.theme-light .kpi-chip.live,
+    html[data-vscode-theme-kind="vscode-light"] body .kpi-chip.live {
+      background: #f0f9ff;
+      color: #0284c7;
+      border: 1px solid #bae6fd;
+    }
+
+    body.vscode-light .kpi-chip.purple,
+    body.theme-light .kpi-chip.purple,
+    html[data-vscode-theme-kind="vscode-light"] body .kpi-chip.purple {
+      background: #faf5ff;
+      color: #9333ea;
+      border: 1px solid #e9d5ff;
+    }
+
+    body.vscode-light .kpi-chip.mint,
+    body.theme-light .kpi-chip.mint,
+    html[data-vscode-theme-kind="vscode-light"] body .kpi-chip.mint {
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+
+    body.vscode-light .kpi-chip.amber,
+    body.theme-light .kpi-chip.amber,
+    html[data-vscode-theme-kind="vscode-light"] body .kpi-chip.amber {
+      background: #fffbeb;
+      color: #d97706;
+      border: 1px solid #fde68a;
+    }
+
+    body.vscode-light .kpi-chip.rose,
+    body.theme-light .kpi-chip.rose,
+    html[data-vscode-theme-kind="vscode-light"] body .kpi-chip.rose {
+      background: #fff1f2;
+      color: #e11d48;
+      border: 1px solid #fecdd3;
+    }
+
+    /* GitHub-Grade Heatmap Grid & Cells in Light Mode */
+    body.vscode-light .github-heatmap-section,
+    body.theme-light .github-heatmap-section,
+    html[data-vscode-theme-kind="vscode-light"] body .github-heatmap-section {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+    }
+
+    body.vscode-light .github-cell,
+    body.theme-light .github-cell,
+    html[data-vscode-theme-kind="vscode-light"] body .github-cell {
+      background: #ebedf0;
+      border: 1px solid rgba(27, 31, 35, 0.06);
+    }
+
+    body.vscode-light .github-cell.heat-0,
+    body.theme-light .github-cell.heat-0,
+    html[data-vscode-theme-kind="vscode-light"] body .github-cell.heat-0 {
+      background: #ebedf0;
+      border-color: rgba(27, 31, 35, 0.06);
+    }
+
+    body.vscode-light .github-cell.heat-0:hover,
+    body.theme-light .github-cell.heat-0:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .github-cell.heat-0:hover {
+      background: #d0d7de;
+    }
+
+    /* GitHub Canonical Light Mode Contribution Greens */
+    body.vscode-light .github-cell.heat-1,
+    body.theme-light .github-cell.heat-1,
+    html[data-vscode-theme-kind="vscode-light"] body .github-cell.heat-1 {
+      background: #9be9a8;
+      border-color: #85e89d;
+    }
+
+    body.vscode-light .github-cell.heat-2,
+    body.theme-light .github-cell.heat-2,
+    html[data-vscode-theme-kind="vscode-light"] body .github-cell.heat-2 {
+      background: #40c463;
+      border-color: #34b755;
+    }
+
+    body.vscode-light .github-cell.heat-3,
+    body.theme-light .github-cell.heat-3,
+    html[data-vscode-theme-kind="vscode-light"] body .github-cell.heat-3 {
+      background: #30a14e;
+      border-color: #288f43;
+    }
+
+    body.vscode-light .github-cell.heat-4,
+    body.theme-light .github-cell.heat-4,
+    html[data-vscode-theme-kind="vscode-light"] body .github-cell.heat-4 {
+      background: #216e39;
+      border-color: #1a5c2f;
+    }
+
+    body.vscode-light .github-cell.is-today,
+    body.theme-light .github-cell.is-today,
+    html[data-vscode-theme-kind="vscode-light"] body .github-cell.is-today {
+      border: 2px solid #0284c7 !important;
+      box-shadow: 0 0 6px rgba(2, 132, 199, 0.4) !important;
+    }
+
+    /* Heatmap Legend in Light Mode */
+    body.vscode-light .legend-color.heat-0,
+    body.theme-light .legend-color.heat-0,
+    html[data-vscode-theme-kind="vscode-light"] body .legend-color.heat-0 {
+      background: #ebedf0;
+      border: 1px solid rgba(27, 31, 35, 0.08);
+    }
+    body.vscode-light .legend-color.heat-1,
+    body.theme-light .legend-color.heat-1,
+    html[data-vscode-theme-kind="vscode-light"] body .legend-color.heat-1 { background: #9be9a8; }
+    body.vscode-light .legend-color.heat-2,
+    body.theme-light .legend-color.heat-2,
+    html[data-vscode-theme-kind="vscode-light"] body .legend-color.heat-2 { background: #40c463; }
+    body.vscode-light .legend-color.heat-3,
+    body.theme-light .legend-color.heat-3,
+    html[data-vscode-theme-kind="vscode-light"] body .legend-color.heat-3 { background: #30a14e; }
+    body.vscode-light .legend-color.heat-4,
+    body.theme-light .legend-color.heat-4,
+    html[data-vscode-theme-kind="vscode-light"] body .legend-color.heat-4 { background: #216e39; }
+
+    /* Heatmap Summary Bar in Light Mode */
+    body.vscode-light .heat-summary-bar,
+    body.theme-light .heat-summary-bar,
+    html[data-vscode-theme-kind="vscode-light"] body .heat-summary-bar {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    body.vscode-light .heat-summary-val,
+    body.theme-light .heat-summary-val,
+    html[data-vscode-theme-kind="vscode-light"] body .heat-summary-val {
+      color: #0f172a;
+    }
+
+    body.vscode-light .heat-summary-label,
+    body.theme-light .heat-summary-label,
+    html[data-vscode-theme-kind="vscode-light"] body .heat-summary-label {
+      color: #475569;
+    }
+
+    body.vscode-light .heat-summary-divider,
+    body.theme-light .heat-summary-divider,
+    html[data-vscode-theme-kind="vscode-light"] body .heat-summary-divider {
+      color: #cbd5e1;
+    }
+
+    body.vscode-light .btn-heatmap-action,
+    body.theme-light .btn-heatmap-action,
+    html[data-vscode-theme-kind="vscode-light"] body .btn-heatmap-action {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      color: #0284c7;
+    }
+
+    body.vscode-light .btn-heatmap-action:hover,
+    body.theme-light .btn-heatmap-action:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .btn-heatmap-action:hover {
+      background: #e0f2fe;
+      border-color: #7dd3fc;
+    }
+
+    /* Model Breakdown Section in Light Mode */
+    body.vscode-light .model-select,
+    body.theme-light .model-select,
+    html[data-vscode-theme-kind="vscode-light"] body .model-select {
+      background: #ffffff;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    body.vscode-light .model-select:hover,
+    body.vscode-light .model-select:focus,
+    body.theme-light .model-select:hover,
+    body.theme-light .model-select:focus,
+    html[data-vscode-theme-kind="vscode-light"] body .model-select:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .model-select:focus {
+      border-color: #0284c7;
+      background: #f8fafc;
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+    }
+
+    body.vscode-light .model-active-card,
+    body.theme-light .model-active-card,
+    html[data-vscode-theme-kind="vscode-light"] body .model-active-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    body.vscode-light .model-active-title,
+    body.theme-light .model-active-title,
+    html[data-vscode-theme-kind="vscode-light"] body .model-active-title {
+      color: #0f172a;
+    }
+
+    body.vscode-light .model-active-tokens,
+    body.theme-light .model-active-tokens,
+    html[data-vscode-theme-kind="vscode-light"] body .model-active-tokens {
+      color: #0284c7;
+    }
+
+    body.vscode-light .model-bar-wrap,
+    body.theme-light .model-bar-wrap,
+    html[data-vscode-theme-kind="vscode-light"] body .model-bar-wrap {
+      background: #e2e8f0;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    body.vscode-light .model-metric-tile,
+    body.theme-light .model-metric-tile,
+    html[data-vscode-theme-kind="vscode-light"] body .model-metric-tile {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+    }
+
+    body.vscode-light .model-metric-tile:hover,
+    body.theme-light .model-metric-tile:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .model-metric-tile:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    body.vscode-light .model-metric-tile-val,
+    body.theme-light .model-metric-tile-val,
+    html[data-vscode-theme-kind="vscode-light"] body .model-metric-tile-val {
+      color: #0f172a;
+    }
+
+    body.vscode-light .model-tag-sessions,
+    body.theme-light .model-tag-sessions,
+    html[data-vscode-theme-kind="vscode-light"] body .model-tag-sessions {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+    }
+
+    body.vscode-light .model-pill,
+    body.theme-light .model-pill,
+    html[data-vscode-theme-kind="vscode-light"] body .model-pill {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+    }
+
+    body.vscode-light .model-pill:hover,
+    body.theme-light .model-pill:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .model-pill:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+      border-color: #cbd5e1;
+    }
+
+    body.vscode-light .model-pill.active,
+    body.theme-light .model-pill.active,
+    html[data-vscode-theme-kind="vscode-light"] body .model-pill.active {
+      background: #f0f9ff;
+      border-color: #0284c7;
+      color: #0284c7;
+    }
+
+    /* Filter Bar, Streaks & Buttons in Light Mode */
+    body.vscode-light .filter-bar,
+    body.theme-light .filter-bar,
+    html[data-vscode-theme-kind="vscode-light"] body .filter-bar {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+    }
+
+    body.vscode-light .filter-btn:hover,
+    body.theme-light .filter-btn:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .filter-btn:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    body.vscode-light .filter-btn.active,
+    body.theme-light .filter-btn.active,
+    html[data-vscode-theme-kind="vscode-light"] body .filter-btn.active {
+      background: #f0f9ff;
+      color: #0284c7;
+      border-color: #bae6fd;
+    }
+
+    body.vscode-light input[type="date"],
+    body.theme-light input[type="date"],
+    html[data-vscode-theme-kind="vscode-light"] body input[type="date"] {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      color-scheme: light;
+    }
+
+    body.vscode-light .streaks-ribbon,
+    body.theme-light .streaks-ribbon,
+    html[data-vscode-theme-kind="vscode-light"] body .streaks-ribbon {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+    }
+
+    body.vscode-light .streaks-item strong,
+    body.theme-light .streaks-item strong,
+    html[data-vscode-theme-kind="vscode-light"] body .streaks-item strong {
+      color: #0f172a;
+    }
+
+    body.vscode-light .streaks-divider,
+    body.theme-light .streaks-divider,
+    html[data-vscode-theme-kind="vscode-light"] body .streaks-divider {
+      color: #cbd5e1 !important;
+    }
+
+    body.vscode-light button,
+    body.theme-light button,
+    html[data-vscode-theme-kind="vscode-light"] body button {
+      background: #f8fafc;
+      color: #1e293b;
+      border: 1px solid #cbd5e1;
+    }
+
+    body.vscode-light button:hover,
+    body.theme-light button:hover,
+    html[data-vscode-theme-kind="vscode-light"] body button:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+      color: #0f172a;
+    }
+
+    body.vscode-light button.primary,
+    body.theme-light button.primary,
+    html[data-vscode-theme-kind="vscode-light"] body button.primary {
+      background: #f0f9ff;
+      color: #0284c7;
+      border-color: #bae6fd;
+    }
+
+    body.vscode-light button.primary:hover,
+    body.theme-light button.primary:hover,
+    html[data-vscode-theme-kind="vscode-light"] body button.primary:hover {
+      background: #e0f2fe;
+    }
+
+    body.vscode-light button.success,
+    body.theme-light button.success,
+    html[data-vscode-theme-kind="vscode-light"] body button.success {
+      background: #f0fdf4;
+      color: #16a34a;
+      border-color: #bbf7d0;
+    }
+
+    body.vscode-light button.success:hover,
+    body.theme-light button.success:hover,
+    html[data-vscode-theme-kind="vscode-light"] body button.success:hover {
+      background: #dcfce7;
+    }
+
+    /* Projects & Quick Filter Pills in Light Mode */
+    body.vscode-light .project-pill,
+    body.theme-light .project-pill,
+    html[data-vscode-theme-kind="vscode-light"] body .project-pill {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    body.vscode-light .project-pill:hover,
+    body.vscode-light .project-pill.active,
+    body.theme-light .project-pill:hover,
+    body.theme-light .project-pill.active,
+    html[data-vscode-theme-kind="vscode-light"] body .project-pill:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .project-pill.active {
+      background: #f0f9ff;
+      border-color: #0284c7;
+      color: #0284c7;
+    }
+
+    body.vscode-light .project-pill .tokens,
+    body.theme-light .project-pill .tokens,
+    html[data-vscode-theme-kind="vscode-light"] body .project-pill .tokens {
+      color: #0f172a;
+    }
+
+    .project-tag {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    body.vscode-light .project-tag,
+    body.theme-light .project-tag,
+    html[data-vscode-theme-kind="vscode-light"] body .project-tag {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    body.vscode-light .q-pill,
+    body.theme-light .q-pill,
+    html[data-vscode-theme-kind="vscode-light"] body .q-pill {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+    }
+
+    body.vscode-light .q-pill:hover,
+    body.vscode-light .q-pill.active,
+    body.theme-light .q-pill:hover,
+    body.theme-light .q-pill.active,
+    html[data-vscode-theme-kind="vscode-light"] body .q-pill:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .q-pill.active {
+      background: #f0f9ff;
+      border-color: #0284c7;
+      color: #0284c7;
+    }
+
+    body.vscode-light .btn-collapse-toggle,
+    body.theme-light .btn-collapse-toggle,
+    html[data-vscode-theme-kind="vscode-light"] body .btn-collapse-toggle {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+    }
+
+    body.vscode-light .btn-collapse-toggle:hover,
+    body.theme-light .btn-collapse-toggle:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .btn-collapse-toggle:hover {
+      background: #f1f5f9;
+      color: #0284c7;
+      border-color: #cbd5e1;
+    }
+
+    body.vscode-light .projects-fade-overlay,
+    body.theme-light .projects-fade-overlay,
+    html[data-vscode-theme-kind="vscode-light"] body .projects-fade-overlay {
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, #ffffff 100%);
+    }
+
+    body.vscode-light .projects-expand-footer,
+    body.theme-light .projects-expand-footer,
+    html[data-vscode-theme-kind="vscode-light"] body .projects-expand-footer {
+      border-top: 1px dashed #e2e8f0;
+    }
+
+    body.vscode-light .table-expand-footer,
+    body.theme-light .table-expand-footer,
+    html[data-vscode-theme-kind="vscode-light"] body .table-expand-footer {
+      border-top: 1px solid #e2e8f0;
+    }
+
+    /* Charts & Circadian Rhythm in Light Mode */
+    body.vscode-light .trend-toggle-group,
+    body.theme-light .trend-toggle-group,
+    html[data-vscode-theme-kind="vscode-light"] body .trend-toggle-group {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+    }
+
+    body.vscode-light .trend-toggle-btn,
+    body.theme-light .trend-toggle-btn,
+    html[data-vscode-theme-kind="vscode-light"] body .trend-toggle-btn {
+      color: #64748b;
+    }
+
+    body.vscode-light .trend-toggle-btn:hover,
+    body.theme-light .trend-toggle-btn:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .trend-toggle-btn:hover {
+      color: #0f172a;
+      background: #e2e8f0;
+    }
+
+    body.vscode-light .trend-toggle-btn.active,
+    body.theme-light .trend-toggle-btn.active,
+    html[data-vscode-theme-kind="vscode-light"] body .trend-toggle-btn.active {
+      background: #ffffff;
+      color: #0284c7;
+      border: 1px solid #bae6fd;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    body.vscode-light .bar-stack,
+    body.theme-light .bar-stack,
+    html[data-vscode-theme-kind="vscode-light"] body .bar-stack {
+      background: #f1f5f9;
+    }
+
+    .empty-bar-segment {
+      height: 100%;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    body.vscode-light .empty-bar-segment,
+    body.theme-light .empty-bar-segment,
+    html[data-vscode-theme-kind="vscode-light"] body .empty-bar-segment {
+      background: #f1f5f9;
+    }
+
+    body.vscode-light .btn-jump-today,
+    body.theme-light .btn-jump-today,
+    html[data-vscode-theme-kind="vscode-light"] body .btn-jump-today {
+      background: #ffffff;
+      border: 1px solid #0284c7;
+      color: #0284c7;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    body.vscode-light .btn-jump-today:hover,
+    body.theme-light .btn-jump-today:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .btn-jump-today:hover {
+      background: #f0f9ff;
+    }
+
+    body.vscode-light .daily-today-badge,
+    body.theme-light .daily-today-badge,
+    html[data-vscode-theme-kind="vscode-light"] body .daily-today-badge {
+      background: #f0f9ff;
+      border-color: #bae6fd;
+      color: #0284c7;
+    }
+
+    body.vscode-light .hour-track,
+    body.theme-light .hour-track,
+    html[data-vscode-theme-kind="vscode-light"] body .hour-track {
+      background: #f1f5f9;
+    }
+
+    body.vscode-light .hour-col:hover .hour-track,
+    body.theme-light .hour-col:hover .hour-track,
+    html[data-vscode-theme-kind="vscode-light"] body .hour-col:hover .hour-track {
+      background: #e2e8f0;
+    }
+
+    body.vscode-light .peak-badge,
+    body.theme-light .peak-badge,
+    html[data-vscode-theme-kind="vscode-light"] body .peak-badge {
+      background: #fef3c7;
+      border-color: #fde68a;
+      color: #d97706;
+    }
+
+    body.vscode-light .hour-label.is-marker,
+    body.theme-light .hour-label.is-marker,
+    html[data-vscode-theme-kind="vscode-light"] body .hour-label.is-marker {
+      color: #475569;
+    }
+
+    body.vscode-light .hour-label.is-dot,
+    body.theme-light .hour-label.is-dot,
+    html[data-vscode-theme-kind="vscode-light"] body .hour-label.is-dot {
+      color: #cbd5e1;
+    }
+
+    body.vscode-light .bar-date.has-label,
+    body.theme-light .bar-date.has-label,
+    html[data-vscode-theme-kind="vscode-light"] body .bar-date.has-label {
+      color: #475569;
+    }
+
+    body.vscode-light .bar-date.is-dot,
+    body.theme-light .bar-date.is-dot,
+    html[data-vscode-theme-kind="vscode-light"] body .bar-date.is-dot {
+      color: #cbd5e1;
+    }
+
+    body.vscode-light .bars-chart::-webkit-scrollbar-track,
+    body.theme-light .bars-chart::-webkit-scrollbar-track,
+    html[data-vscode-theme-kind="vscode-light"] body .bars-chart::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    body.vscode-light .bars-chart::-webkit-scrollbar-thumb,
+    body.theme-light .bars-chart::-webkit-scrollbar-thumb,
+    html[data-vscode-theme-kind="vscode-light"] body .bars-chart::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+    }
+
+    body.vscode-light .github-heatmap-section::-webkit-scrollbar-track,
+    body.theme-light .github-heatmap-section::-webkit-scrollbar-track,
+    html[data-vscode-theme-kind="vscode-light"] body .github-heatmap-section::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    body.vscode-light .github-heatmap-section::-webkit-scrollbar-thumb,
+    body.theme-light .github-heatmap-section::-webkit-scrollbar-thumb,
+    html[data-vscode-theme-kind="vscode-light"] body .github-heatmap-section::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+    }
+
+    /* Table & Search in Light Mode */
+    body.vscode-light .search-input,
+    body.theme-light .search-input,
+    html[data-vscode-theme-kind="vscode-light"] body .search-input {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+    }
+
+    body.vscode-light .search-input:focus,
+    body.theme-light .search-input:focus,
+    html[data-vscode-theme-kind="vscode-light"] body .search-input:focus {
+      border-color: #0284c7;
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+    }
+
+    body.vscode-light .data-table th,
+    body.theme-light .data-table th,
+    html[data-vscode-theme-kind="vscode-light"] body .data-table th {
+      border-bottom: 1px solid #e2e8f0;
+      color: #64748b;
+    }
+
+    body.vscode-light .data-table td,
+    body.theme-light .data-table td,
+    html[data-vscode-theme-kind="vscode-light"] body .data-table td {
+      border-bottom: 1px solid #f1f5f9;
+      color: #1e293b;
+    }
+
+    body.vscode-light .session-title-cell,
+    body.theme-light .session-title-cell,
+    html[data-vscode-theme-kind="vscode-light"] body .session-title-cell {
+      color: #0f172a;
+    }
+
+    body.vscode-light .data-table tr.clickable-row:hover td,
+    body.theme-light .data-table tr.clickable-row:hover td,
+    html[data-vscode-theme-kind="vscode-light"] body .data-table tr.clickable-row:hover td {
+      background: #f8fafc;
+    }
+
+    .table-cell-input { color: #60a5fa; }
+    .table-cell-cached { color: #a855f7; }
+    .table-cell-output { color: #22c55e; }
+
+    body.vscode-light .table-cell-input, body.theme-light .table-cell-input, html[data-vscode-theme-kind="vscode-light"] body .table-cell-input { color: #0284c7 !important; }
+    body.vscode-light .table-cell-cached, body.theme-light .table-cell-cached, html[data-vscode-theme-kind="vscode-light"] body .table-cell-cached { color: #9333ea !important; }
+    body.vscode-light .table-cell-output, body.theme-light .table-cell-output, html[data-vscode-theme-kind="vscode-light"] body .table-cell-output { color: #16a34a !important; }
+
+    body.vscode-light .btn-copy,
+    body.theme-light .btn-copy,
+    html[data-vscode-theme-kind="vscode-light"] body .btn-copy {
+      color: #64748b;
+    }
+
+    body.vscode-light .btn-copy:hover,
+    body.theme-light .btn-copy:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .btn-copy:hover {
+      color: #0284c7;
+      background: #f0f9ff;
+    }
+
+    /* Session Inspector Drawer in Light Mode */
+    body.vscode-light .drawer,
+    body.theme-light .drawer,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer {
+      background: #ffffff;
+      border-left: 1px solid #e2e8f0;
+      box-shadow: -10px 0 35px rgba(0, 0, 0, 0.12);
+    }
+
+    body.vscode-light .drawer-header,
+    body.theme-light .drawer-header,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-header {
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    body.vscode-light .drawer-title,
+    body.theme-light .drawer-title,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-title {
+      color: #0f172a;
+    }
+
+    body.vscode-light .drawer-close,
+    body.theme-light .drawer-close,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-close {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+    }
+
+    body.vscode-light .drawer-close:hover,
+    body.theme-light .drawer-close:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-close:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #dc2626;
+    }
+
+    body.vscode-light .drawer-spec-tile,
+    body.theme-light .drawer-spec-tile,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-spec-tile {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    body.vscode-light .drawer-spec-tile:hover,
+    body.theme-light .drawer-spec-tile:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-spec-tile:hover {
+      border-color: #0284c7;
+    }
+
+    body.vscode-light .drawer-spec-val,
+    body.theme-light .drawer-spec-val,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-spec-val {
+      color: #0f172a;
+    }
+
+    body.vscode-light .drawer-section-card,
+    body.theme-light .drawer-section-card,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-section-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      box-shadow: none;
+    }
+
+    body.vscode-light .drawer-section-title,
+    body.theme-light .drawer-section-title,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-section-title {
+      color: #0f172a;
+    }
+
+    body.vscode-light .drawer-bar-wrap,
+    body.theme-light .drawer-bar-wrap,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-bar-wrap {
+      background: #e2e8f0;
+    }
+
+    body.vscode-light .drawer-token-total-row,
+    body.theme-light .drawer-token-total-row,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-token-total-row {
+      border-top: 1px solid #e2e8f0;
+    }
+
+    body.vscode-light .drawer-token-total-lbl,
+    body.theme-light .drawer-token-total-lbl,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-token-total-lbl {
+      color: #0f172a;
+    }
+
+    body.vscode-light .drawer-token-total-val,
+    body.theme-light .drawer-token-total-val,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-token-total-val {
+      color: #0284c7;
+    }
+
+    body.vscode-light .drawer-dev-card,
+    body.theme-light .drawer-dev-card,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-dev-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    body.vscode-light .drawer-btn-inline-copy,
+    body.theme-light .drawer-btn-inline-copy,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-btn-inline-copy {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #64748b;
+    }
+
+    body.vscode-light .drawer-btn-inline-copy:hover,
+    body.theme-light .drawer-btn-inline-copy:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-btn-inline-copy:hover {
+      background: #f0f9ff;
+      color: #0284c7;
+      border-color: #0284c7;
+    }
+
+    body.vscode-light .drawer-btn-secondary,
+    body.theme-light .drawer-btn-secondary,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-btn-secondary {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+    }
+
+    body.vscode-light .drawer-btn-secondary:hover,
+    body.theme-light .drawer-btn-secondary:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-btn-secondary:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    body.vscode-light .drawer-btn-primary,
+    body.theme-light .drawer-btn-primary,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-btn-primary {
+      background: #f0f9ff;
+      border: 1px solid #0284c7;
+      color: #0284c7;
+    }
+
+    body.vscode-light .drawer-btn-primary:hover,
+    body.theme-light .drawer-btn-primary:hover,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-btn-primary:hover {
+      background: #e0f2fe;
+      box-shadow: 0 0 10px rgba(2, 132, 199, 0.2);
+    }
+
+    body.vscode-light .drawer-tool-pill,
+    body.theme-light .drawer-tool-pill,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-tool-pill {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+    }
+
+    body.vscode-light .drawer-tool-name,
+    body.theme-light .drawer-tool-name,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-tool-name {
+      color: #0284c7;
+    }
+
+    body.vscode-light .drawer-tool-count,
+    body.theme-light .drawer-tool-count,
+    html[data-vscode-theme-kind="vscode-light"] body .drawer-tool-count {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    /* Onboard & Error Banners in Light Mode */
+    .onboard-banner {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: #bae6fd;
+      line-height: 1.5;
+    }
+
+    body.vscode-light .onboard-banner,
+    body.theme-light .onboard-banner,
+    html[data-vscode-theme-kind="vscode-light"] body .onboard-banner {
+      background: #f0f9ff;
+      border-color: #bae6fd;
+      color: #0369a1;
+    }
+
+    body.vscode-light #error-banner,
+    body.theme-light #error-banner,
+    html[data-vscode-theme-kind="vscode-light"] body #error-banner {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    body.vscode-light #error-message,
+    body.theme-light #error-message,
+    html[data-vscode-theme-kind="vscode-light"] body #error-message {
+      color: #b91c1c;
+    }
+
+    body.vscode-light .loading-overlay,
+    body.theme-light .loading-overlay,
+    html[data-vscode-theme-kind="vscode-light"] body .loading-overlay {
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    body.vscode-light .toast-popup,
+    body.theme-light .toast-popup,
+    html[data-vscode-theme-kind="vscode-light"] body .toast-popup {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0284c7;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     }
   </style>
 </head>
@@ -2284,11 +3331,11 @@
         <span class="streaks-item" title="Current consecutive days coding with Antigravity">
           🔥 <strong id="streak-current">-</strong> Streak
         </span>
-        <span style="color:rgba(255,255,255,0.15);">|</span>
+        <span class="streaks-divider">|</span>
         <span class="streaks-item" title="Longest active daily streak recorded">
           🏆 <strong id="streak-best">-</strong> Best
         </span>
-        <span style="color:rgba(255,255,255,0.15);">|</span>
+        <span class="streaks-divider">|</span>
         <span class="streaks-item" title="Total active coding days with agent">
           📅 <strong id="streak-active">-</strong> Days
         </span>
@@ -2424,7 +3471,7 @@
           Input (Prompt)
         </div>
       </div>
-      <div class="kpi-value" id="val-input-tokens" style="color:#93c5fd;">-</div>
+      <div class="kpi-value val-input" id="val-input-tokens">-</div>
       <div class="kpi-sub">Non-cached context</div>
     </div>
 
@@ -2436,7 +3483,7 @@
           Output Tokens
         </div>
       </div>
-      <div class="kpi-value" id="val-output-tokens" style="color:#4ade80;">-</div>
+      <div class="kpi-value val-output" id="val-output-tokens">-</div>
       <div class="kpi-sub">Model generation</div>
     </div>
 
@@ -2449,7 +3496,7 @@
         </div>
         <span class="kpi-chip purple">Cache</span>
       </div>
-      <div class="kpi-value" id="val-cached-tokens" style="color:#c084fc;">-</div>
+      <div class="kpi-value val-cached" id="val-cached-tokens">-</div>
       <div class="kpi-sub">Context cache hits</div>
     </div>
 
@@ -2462,7 +3509,7 @@
         </div>
         <span class="kpi-chip mint">Hit Rate</span>
       </div>
-      <div class="kpi-value" id="val-cache-rate" style="color:#34d399;">-</div>
+      <div class="kpi-value val-cache-rate" id="val-cache-rate">-</div>
       <div class="kpi-sub">Prompt cache hit rate</div>
     </div>
 
@@ -2475,7 +3522,7 @@
         </div>
         <span class="kpi-chip amber">Thinking</span>
       </div>
-      <div class="kpi-value" id="val-thinking-tokens" style="color:#fbbf24;">-</div>
+      <div class="kpi-value val-thinking" id="val-thinking-tokens">-</div>
       <div class="kpi-sub">Thinking mode tokens</div>
     </div>
 
@@ -2488,7 +3535,7 @@
         </div>
         <span class="kpi-chip rose">Actions</span>
       </div>
-      <div class="kpi-value" id="val-tool-calls" style="color:#fb7185;">-</div>
+      <div class="kpi-value val-tool-calls" id="val-tool-calls">-</div>
       <div class="kpi-sub" id="val-tool-sub">Agent tool executions</div>
     </div>
   </div>
@@ -2871,6 +3918,45 @@
 
   <script>
     const vscode = (typeof acquireVsCodeApi !== 'undefined') ? acquireVsCodeApi() : null;
+
+    // Dynamic Theme Sync (Auto-adapts to Dark, Light, and High-Contrast themes in real-time)
+    function syncThemeClass() {
+      try {
+        const isExplicitLight = document.body.classList.contains('vscode-light') || 
+                               document.body.classList.contains('vscode-high-contrast-light') ||
+                               document.documentElement.getAttribute('data-vscode-theme-kind') === 'vscode-light' ||
+                               document.body.getAttribute('data-vscode-theme-kind') === 'vscode-light';
+        
+        let isLight = isExplicitLight;
+        if (!isLight && !document.body.classList.contains('vscode-dark') && !document.body.classList.contains('vscode-high-contrast')) {
+          const bg = window.getComputedStyle(document.body).backgroundColor;
+          const rgb = bg.match(/\d+/g);
+          if (rgb && rgb.length >= 3) {
+            const lum = 0.299 * parseInt(rgb[0], 10) + 0.587 * parseInt(rgb[1], 10) + 0.114 * parseInt(rgb[2], 10);
+            if (lum > 140) isLight = true;
+          }
+        }
+        
+        if (isLight) {
+          document.body.classList.add('theme-light');
+          document.body.classList.remove('theme-dark');
+        } else {
+          document.body.classList.add('theme-dark');
+          document.body.classList.remove('theme-light');
+        }
+      } catch (e) {
+        console.error('Theme sync error', e);
+      }
+    }
+
+    syncThemeClass();
+
+    if (window.MutationObserver) {
+      const themeObserver = new MutationObserver(() => syncThemeClass());
+      themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class', 'data-vscode-theme-kind', 'style'] });
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-vscode-theme-kind'] });
+    }
+
     let currentData = null;
     let activeProjectFilter = null;
     let activeQuickFilter = 'all';
@@ -3139,7 +4225,7 @@
       }
       (data.top_tools || []).forEach(t => {
         const item = document.createElement('div');
-        item.style = 'background:rgba(255,255,255,0.04); border:1px solid var(--border-color); padding:4px 10px; border-radius:6px; font-size:11px; display:inline-flex; align-items:center; gap:6px;';
+        item.className = 'tool-item';
         item.innerHTML = `<span class="mono" style="color:var(--accent-blue);">${escapeHtml(t.name)}</span> <span style="color:var(--text-muted); font-weight:600;">${t.count.toLocaleString()}</span>`;
         toolsContainer.appendChild(item);
       });
@@ -3437,7 +4523,7 @@
               <div class="bar-segment" style="height:${cachedPct}%; background:#a855f7;" title="Context Cache"></div>
               <div class="bar-segment" style="height:${inputPct}%; background:#60a5fa;" title="Non-cached Input"></div>
             ` : `
-              <div class="bar-segment" style="height:100%; background:rgba(255,255,255,0.06);"></div>
+              <div class="bar-segment empty-bar-segment" style="height:100%;"></div>
             `}
           </div>
           <div class="bar-date ${showLabel ? 'has-label' : 'is-dot'} ${isToday ? 'is-today-label' : ''}" title="${d.date}">${escapeHtml(labelContent)}</div>
@@ -4068,7 +5154,7 @@
           <td class="mono" style="color:var(--text-muted);">${escapeHtml(s.date)}</td>
           <td>
             <span class="surface-badge surface-${(s.surface || 'ide').toLowerCase()}">${escapeHtml(s.surface || 'IDE')}</span>
-            <span class="mono" style="background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; font-size:11px;">${escapeHtml(s.project || 'General')}</span>
+            <span class="mono project-tag">${escapeHtml(s.project || 'General')}</span>
           </td>
           <td class="session-title-cell" title="${escapeHtml(s.title || 'Session ' + shortId)}">
             ${s.is_active ? '<span class="badge-active-live"><span class="pulse"></span> Active</span>' : (s.is_recent ? '<span class="badge-recent">Recent</span>' : '')}
@@ -4078,9 +5164,9 @@
           <td class="col-hide-narrow" style="color:var(--text-muted); font-size:11px;">${escapeHtml(s.model)}</td>
           <td class="col-hide-narrow mono">${s.turn_count}</td>
           <td class="col-hide-narrow mono" style="color:var(--text-muted);">${formatDuration(s.duration_sec)}</td>
-          <td class="col-hide-narrow mono" style="color:#60a5fa;">${formatNumber(s.input_tokens)}</td>
-          <td class="col-hide-narrow mono" style="color:#a855f7;">${formatNumber(s.cached_tokens)}</td>
-          <td class="col-hide-narrow mono" style="color:#22c55e;">${formatNumber(s.output_tokens)}</td>
+          <td class="col-hide-narrow mono table-cell-input">${formatNumber(s.input_tokens)}</td>
+          <td class="col-hide-narrow mono table-cell-cached">${formatNumber(s.cached_tokens)}</td>
+          <td class="col-hide-narrow mono table-cell-output">${formatNumber(s.output_tokens)}</td>
           <td class="mono" style="font-weight:600; color:var(--accent-blue);" title="Exact total tokens">${formatNumber(s.total_tokens)}</td>
         `;
 
