@@ -10,8 +10,8 @@
 
 <p align="center">
   <a href="https://github.com/Nir-Bhay/antigravity-usage-intelligence/actions"><img src="https://img.shields.io/github/actions/workflow/status/Nir-Bhay/antigravity-usage-intelligence/ci.yml?branch=main&style=flat-square&logo=github&label=CI%20Build" alt="CI Status" /></a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=nirbhay-hiwse.antigravity-usage-intelligence"><img src="https://img.shields.io/badge/VS%20Code%20Marketplace-v1.0.0-007ACC?style=flat-square&logo=visual-studio-code&logoColor=white" alt="VS Code Marketplace" /></a>
-  <a href="https://open-vsx.org/extension/nirbhay-hiwse/antigravity-usage-intelligence"><img src="https://img.shields.io/badge/Open%20VSX-v1.0.0-9C27B0?style=flat-square&logo=eclipse-ide&logoColor=white" alt="Open VSX" /></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=nirbhay-hiwse.antigravity-usage-intelligence"><img src="https://img.shields.io/badge/VS%20Code%20Marketplace-v1.0.6-007ACC?style=flat-square&logo=visual-studio-code&logoColor=white" alt="VS Code Marketplace" /></a>
+  <a href="https://open-vsx.org/extension/nirbhay-hiwse/antigravity-usage-intelligence"><img src="https://img.shields.io/badge/Open%20VSX-v1.0.6-9C27B0?style=flat-square&logo=eclipse-ide&logoColor=white" alt="Open VSX" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License: MIT" /></a>
   <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue?style=flat-square" alt="Platform" />
   <img src="https://img.shields.io/badge/Privacy-No%20Internet%20%7C%20Local%20Only-10b981?style=flat-square" alt="Local only" />
@@ -135,10 +135,10 @@ ovsx get nirbhay-hiwse.antigravity-usage-intelligence
 ```
 
 ### Option 3: Manual VSIX Installation
-1. Download `antigravity-usage-intelligence-1.0.0.vsix` from [GitHub Releases](https://github.com/Nir-Bhay/antigravity-usage-intelligence/releases).
+1. Download `antigravity-usage-intelligence-1.0.6.vsix` from [GitHub Releases](https://github.com/Nir-Bhay/antigravity-usage-intelligence/releases/tag/v1.0.6).
 2. Install via command line:
    ```bash
-   code --install-extension antigravity-usage-intelligence-1.0.0.vsix
+   code --install-extension antigravity-usage-intelligence-1.0.6.vsix
    ```
    Or use the Command Palette (`Ctrl+Shift+P` → **Extensions: Install from VSIX...**).
 
