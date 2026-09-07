@@ -52,7 +52,9 @@ jobs:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
         run: |
           echo "Publishing ${{ steps.find_vsix.outputs.vsix_file }} to Open VSX..."
-          npx --yes ovsx publish "${{ steps.find_vsix.outputs.vsix_file }}" -p "${{ secrets.OVSX_PAT }}"
+          npx --yes ovsx publish "${{ steps.find_vsix.outputs.vsix_file }}" -p "${{ secrets.OVSX_PAT }}" || {
+            echo "::warning::Open VSX publish returned non-zero (version may already be published). Continuing..."
+          }
 
       - name: Publish to VS Code Marketplace
         if: env.VSCE_PAT != ''
