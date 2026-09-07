@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.3] - 2026-09-07
+
+### Fixed
+* **Activity Bar Icon Rendering**: Replaced the solid-background SVG with an optimized 24x24 transparent-background vector icon using `currentColor`. Eliminates the bug where the activity bar icon rendered as a blank square or failed to display against custom IDE themes.
+
+### Improved
+* **Crisp Marketplace Branding**: Upgraded `assets/icon.png` to a pristine, supersampled 256x256 high-resolution render with anti-aliasing, vibrant gradients, and clean rounded squircle corners for marketplace listings.
+
+---
+
 ## [1.0.2] - 2026-09-07
 
 ### Fixed
