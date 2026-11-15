@@ -5603,6 +5603,7 @@
         if (r === '7d') { const d = new Date(now); d.setDate(d.getDate() - 7); return { start: fmt(d), end: fmt(now) }; }
         if (r === '30d') { const d = new Date(now); d.setDate(d.getDate() - 30); return { start: fmt(d), end: fmt(now) }; }
         if (r === '90d') { const d = new Date(now); d.setDate(d.getDate() - 90); return { start: fmt(d), end: fmt(now) }; }
+        if (r === '180d') { const d = new Date(now); d.setDate(d.getDate() - 180); return { start: fmt(d), end: fmt(now) }; }
         return { start: null, end: null };
       }
       function silentRefresh() {
