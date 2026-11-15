@@ -1,4 +1,4 @@
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
 const https = require('https');
 const http = require('http');
 
@@ -6,9 +6,9 @@ let cachedConn = null;
 let cachedQuota = null;
 let lastQueryTime = 0;
 
-function execCommand(cmd) {
+function execBin(bin, args) {
   return new Promise((resolve) => {
-    exec(cmd, { timeout: 4000 }, (err, stdout, stderr) => {
+    execFile(bin, args, { timeout: 4000, maxBuffer: 8 * 1024 * 1024 }, (err, stdout, stderr) => {
       resolve({ err, stdout: stdout ? stdout.trim() : '', stderr });
     });
   });
@@ -63,15 +63,15 @@ function queryStatus(port, csrfToken, protocol) {
 
 async function listServerCandidates() {
   if (process.platform === 'win32') {
-    const psCmd = 'powershell -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $_.Name -like \'*language_server*\' -and $_.CommandLine -like \'*--csrf_token*\' } | Select-Object ProcessId, CommandLine | ConvertTo-Json -Compress"';
-    const { stdout } = await execCommand(psCmd);
+    const psScript = "Get-CimInstance Win32_Process | Where-Object { $_.Name -like '*language_server*' -and $_.CommandLine -like '*--csrf_token*' } | Select-Object ProcessId, CommandLine | ConvertTo-Json -Compress";
+    const { stdout } = await execBin('powershell', ['-NoProfile', '-Command', psScript]);
     if (!stdout) return [];
     try {
       const parsed = JSON.parse(stdout);
       const arr = Array.isArray(parsed) ? parsed : [parsed];
       return arr
-        .filter((c) => c && c.ProcessId && c.CommandLine)
-        .map((c) => ({ pid: c.ProcessId, cmd: c.CommandLine }));
+        .filter((c) => c && Number.isInteger(Number(c.ProcessId)) && Number(c.ProcessId) > 0 && c.CommandLine)
+        .map((c) => ({ pid: Number(c.ProcessId), cmd: c.CommandLine }));
     } catch (e) {
       return [];
     }
@@ -79,7 +79,7 @@ async function listServerCandidates() {
 
   // macOS / Linux: pgrep prints "<pid> <full command line>" as plain text,
   // so parse lines instead of expecting JSON.
-  const { stdout } = await execCommand('pgrep -fa language_server');
+  const { stdout } = await execBin('pgrep', ['-fa', 'language_server']);
   if (!stdout) return [];
   const out = [];
   for (const line of stdout.split('\n')) {
@@ -93,27 +93,32 @@ async function listServerCandidates() {
 
 async function listListeningPorts(pid) {
   const ports = new Set();
+  if (!Number.isInteger(pid) || pid <= 0) return ports;
   try {
     if (process.platform === 'win32') {
-      const netCmd = `netstat -ano | findstr "LISTENING" | findstr " ${pid}"`;
-      const { stdout: netOut } = await execCommand(netCmd);
+      // Match the PID on its exact (last) column so PID 12 never matches 123.
+      const { stdout: netOut } = await execBin('netstat', ['-ano']);
       if (netOut) {
         for (const line of netOut.split('\n')) {
-          const m = line.trim().match(/:(\d+)\s+.*LISTENING/);
+          const cols = line.trim().split(/\s+/);
+          if (cols.length < 5 || cols[cols.length - 1] !== String(pid) || cols[3] !== 'LISTENING') continue;
+          const m = cols[1].match(/:(\d+)$/);
           if (m) ports.add(parseInt(m[1], 10));
         }
       }
     } else if (process.platform === 'linux') {
-      const { stdout } = await execCommand(`ss -ltnp 2>/dev/null | grep "pid=${pid},"`);
+      const { stdout } = await execBin('ss', ['-ltnp']);
       if (stdout) {
+        const pidMarker = `pid=${pid},`;
         for (const line of stdout.split('\n')) {
+          if (!line.includes(pidMarker)) continue;
           const m = line.match(/:(\d+)\s/);
           if (m) ports.add(parseInt(m[1], 10));
         }
       }
     } else {
       // macOS: lsof is best-effort (may not exist -> ignored below).
-      const { stdout } = await execCommand(`lsof -aPn -iTCP -sTCP:LISTEN -p ${pid} 2>/dev/null`);
+      const { stdout } = await execBin('lsof', ['-aPn', '-iTCP', '-sTCP:LISTEN', '-p', String(pid)]);
       if (stdout) {
         for (const line of stdout.split('\n')) {
           const m = line.match(/:(\d+)\s+\(LISTEN\)/);
@@ -136,23 +141,14 @@ async function scanForLanguageServer() {
     if (!pid || !cmd) continue;
 
     const tokenMatch = cmd.match(/--csrf_token[=\s]+([A-Za-z0-9\-_.=+/]+)/);
-    const extPortMatch = cmd.match(/--extension_server_port[=\s]+(\d+)/);
     if (!tokenMatch) continue;
 
     const csrfToken = tokenMatch[1];
-    const extPort = extPortMatch ? parseInt(extPortMatch[1], 10) : 0;
 
-    const ports = new Set();
-    if (extPort > 0) {
-      ports.add(extPort);
-      ports.add(extPort + 1);
-      ports.add(extPort + 2);
-    }
-    for (const p of await listListeningPorts(pid)) ports.add(p);
-
-    // Bound worst-case probe time: cap ports, probe all in parallel,
-    // return the first endpoint that answers with a userStatus.
-    const portList = [...ports].filter((p) => p > 0 && p < 65536).slice(0, 25);
+    // Only probe ports this PID is actually listening on, so the CSRF token is never
+    // sent to a guessed port (--extension_server_port and its neighbours) owned by another process.
+    const owned = await listListeningPorts(pid);
+    const portList = [...owned].filter((p) => p > 0 && p < 65536).slice(0, 25);
     const probes = [];
     for (const port of portList) {
       for (const proto of ['https', 'http']) {
