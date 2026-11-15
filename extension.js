@@ -9,7 +9,8 @@ let statusBarItem;
 let statsProvider;
 let fullPanel;
 let autoRefreshTimer;
-let activeChildProcess = null;
+const activeChildProcesses = new Set();
+const inFlightStats = new Map();
 let lastRange = { start: null, end: null };
 let firedQuotaAlerts = {};
 
@@ -148,7 +149,7 @@ function runCollector(pythonBin, args) {
       cmdArgs,
       { maxBuffer: 15 * 1024 * 1024, timeout: 30000 },
       (error, stdout, stderr) => {
-        if (activeChildProcess === child) activeChildProcess = null;
+        activeChildProcesses.delete(child);
         if (error) {
           error.stderr = stderr;
           return reject(error);
@@ -161,11 +162,22 @@ function runCollector(pythonBin, args) {
         }
       }
     );
-    activeChildProcess = child;
+    activeChildProcesses.add(child);
   });
 }
 
-async function fetchStatsData(args = []) {
+/**
+ * Coalesces concurrent collector runs with the same args (in-flight dedupe).
+ */
+function fetchStatsData(args = []) {
+  const key = args.join('\u0000');
+  if (inFlightStats.has(key)) return inFlightStats.get(key);
+  const p = fetchStatsDataUncached(args).finally(() => inFlightStats.delete(key));
+  inFlightStats.set(key, p);
+  return p.then((d) => ({ ...d }));
+}
+
+async function fetchStatsDataUncached(args = []) {
   let pythonBin = await resolvePythonPath();
   const demoCfg = vscode.workspace.getConfiguration('antigravity-stats');
   if (demoCfg.get('demoMode', false) && !args.includes('--demo')) {
@@ -201,11 +213,15 @@ async function fetchStatsData(args = []) {
   }
 }
 
-async function updateStatusBar() {
+/**
+ * Updates the status bar with today's tokens. Pass `todayData` (collector output for today's
+ * range) to reuse an already-fetched payload and skip a second Python spawn.
+ */
+async function updateStatusBar(todayData) {
   if (!statusBarItem) return;
   try {
     const today = getLocalDateString();
-    const data = await fetchStatsData(['--start', today, '--end', today]);
+    const data = todayData || await fetchStatsData(['--start', today, '--end', today]);
     const tokens = data.summary.total_tokens;
     if (data.summary.total_sessions === 0) {
       statusBarItem.text = `$(graph) AI: no data`;
@@ -221,6 +237,12 @@ async function updateStatusBar() {
     statusBarItem.tooltip = `Antigravity Stats error: ${err.message}`;
     statusBarItem.show();
   }
+}
+
+/** Returns `data` only when the request range is exactly today (reusable for the status bar). */
+function todayRangeData(start, end, data) {
+  const today = getLocalDateString();
+  return start === today && end === today ? data : undefined;
 }
 
 function getWebviewContent(webview, extensionUri) {
@@ -255,7 +277,7 @@ async function handleWebviewMessage(webview, message) {
         if (liveQuota) data.live_quota = liveQuota;
         maybeQuotaAlert(liveQuota);
         webview.postMessage({ command: 'loadStats', data, defaultRange });
-        updateStatusBar();
+        updateStatusBar(todayRangeData(start, end, data));
         break;
       }
       case 'refresh':
@@ -266,12 +288,13 @@ async function handleWebviewMessage(webview, message) {
         lastRange = { start: message.start || null, end: message.end || null };
         const [data, liveQuota] = await Promise.all([
           fetchStatsData(args),
+          // Only manual 'refresh' forces a live quota probe; the 30s poll ('fetchStats') uses the cache/backoff.
           getLiveQuota(message.command === 'refresh').catch(() => null)
         ]);
         if (liveQuota) data.live_quota = liveQuota;
         maybeQuotaAlert(liveQuota);
         webview.postMessage({ command: 'loadStats', data });
-        updateStatusBar();
+        updateStatusBar(todayRangeData(message.start, message.end, data));
         break;
       }
       case 'rebuild': {
@@ -337,8 +360,9 @@ async function handleWebviewMessage(webview, message) {
 }
 
 class AntigravityStatsViewProvider {
-  constructor(extensionUri) {
+  constructor(extensionUri, subscriptions) {
     this._extensionUri = extensionUri;
+    this._subscriptions = subscriptions || [];
     this._view = null;
   }
 
@@ -349,8 +373,15 @@ class AntigravityStatsViewProvider {
       localResourceRoots: [this._extensionUri]
     };
     webviewView.webview.html = getWebviewContent(webviewView.webview, this._extensionUri);
-    webviewView.webview.onDidReceiveMessage(async (message) => {
+    const messageSub = webviewView.webview.onDidReceiveMessage(async (message) => {
       await handleWebviewMessage(webviewView.webview, message);
+    });
+    this._subscriptions.push(messageSub);
+    webviewView.onDidDispose(() => {
+      this._view = null;
+      messageSub.dispose();
+      const idx = this._subscriptions.indexOf(messageSub);
+      if (idx >= 0) this._subscriptions.splice(idx, 1);
     });
   }
 
@@ -367,7 +398,7 @@ class AntigravityStatsViewProvider {
         if (liveQuota) data.live_quota = liveQuota;
         maybeQuotaAlert(liveQuota);
         this._view.webview.postMessage({ command: 'loadStats', data });
-        updateStatusBar();
+        updateStatusBar(todayRangeData(start, end, data));
       } catch (err) {
         this._view.webview.postMessage({ command: 'error', message: err.message });
       }
@@ -408,7 +439,7 @@ function setupAutoRefresh(context) {
 
 function activate(context) {
   // 1. Register Sidebar Webview
-  statsProvider = new AntigravityStatsViewProvider(context.extensionUri);
+  statsProvider = new AntigravityStatsViewProvider(context.extensionUri, context.subscriptions);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider('antigravity-stats-view', statsProvider)
   );
@@ -434,12 +465,16 @@ function activate(context) {
 
       fullPanel.webview.html = getWebviewContent(fullPanel.webview, context.extensionUri);
 
-      fullPanel.webview.onDidReceiveMessage(async (message) => {
+      const panelMsgSub = fullPanel.webview.onDidReceiveMessage(async (message) => {
         await handleWebviewMessage(fullPanel.webview, message);
       });
+      context.subscriptions.push(panelMsgSub);
 
       fullPanel.onDidDispose(() => {
         fullPanel = null;
+        panelMsgSub.dispose();
+        const idx = context.subscriptions.indexOf(panelMsgSub);
+        if (idx >= 0) context.subscriptions.splice(idx, 1);
       }, null, context.subscriptions);
     })
   );
@@ -503,10 +538,10 @@ function deactivate() {
     clearInterval(autoRefreshTimer);
     autoRefreshTimer = null;
   }
-  if (activeChildProcess) {
-    try { activeChildProcess.kill(); } catch (e) {}
-    activeChildProcess = null;
+  for (const child of activeChildProcesses) {
+    try { child.kill(); } catch (e) {}
   }
+  activeChildProcesses.clear();
   if (statusBarItem) {
     statusBarItem.dispose();
   }

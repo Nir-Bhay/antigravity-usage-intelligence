@@ -2,6 +2,19 @@ const { exec } = require('child_process');
 const https = require('https');
 const http = require('http');
 
+// Negative cache: after failed language-server scans, back off exponentially
+// (30s, 60s, ... capped at 2 min) instead of re-running PowerShell/netstat/probes every poll.
+const SCAN_BACKOFF_BASE_MS = 30000;
+const SCAN_BACKOFF_MAX_MS = 120000;
+let scanFailures = 0;
+let nextScanAt = 0;
+
+function recordScanFailure() {
+  scanFailures += 1;
+  const delay = Math.min(SCAN_BACKOFF_BASE_MS * 2 ** (scanFailures - 1), SCAN_BACKOFF_MAX_MS);
+  nextScanAt = Date.now() + delay;
+}
+
 let cachedConn = null;
 let cachedQuota = null;
 let lastQueryTime = 0;
@@ -245,22 +258,27 @@ async function getLiveQuota(forceRefresh = false) {
     cachedConn = null;
   }
 
-  // 2. Scan for language server
-  try {
-    const conn = await scanForLanguageServer();
-    if (conn) {
-      cachedConn = {
-        port: conn.port,
-        protocol: conn.protocol,
-        csrfToken: conn.csrfToken,
-        pid: conn.pid,
-      };
-      cachedQuota = parseQuotaFromStatus(conn.rawStatus);
-      lastQueryTime = now;
-      return cachedQuota;
+  // 2. Scan for language server (skipped during backoff; a forced refresh always scans)
+  if (forceRefresh || Date.now() >= nextScanAt) {
+    try {
+      const conn = await scanForLanguageServer();
+      if (conn) {
+        scanFailures = 0;
+        nextScanAt = 0;
+        cachedConn = {
+          port: conn.port,
+          protocol: conn.protocol,
+          csrfToken: conn.csrfToken,
+          pid: conn.pid,
+        };
+        cachedQuota = parseQuotaFromStatus(conn.rawStatus);
+        lastQueryTime = now;
+        return cachedQuota;
+      }
+      recordScanFailure();
+    } catch (err) {
+      recordScanFailure();
     }
-  } catch (err) {
-    // Graceful fallback
   }
 
   // Scan failed: serve last-known data explicitly marked stale

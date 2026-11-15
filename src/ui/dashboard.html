@@ -3937,13 +3937,12 @@
           }
         }
         
-        if (isLight) {
-          document.body.classList.add('theme-light');
-          document.body.classList.remove('theme-dark');
-        } else {
-          document.body.classList.add('theme-dark');
-          document.body.classList.remove('theme-light');
-        }
+        // Only touch classList when the state actually changes (avoids MutationObserver churn).
+        const want = isLight ? 'theme-light' : 'theme-dark';
+        const other = isLight ? 'theme-dark' : 'theme-light';
+        if (document.body.classList.contains(want) && !document.body.classList.contains(other)) return;
+        document.body.classList.remove(other);
+        document.body.classList.add(want);
       } catch (e) {
         console.error('Theme sync error', e);
       }
@@ -3955,6 +3954,15 @@
       const themeObserver = new MutationObserver(() => syncThemeClass());
       themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class', 'data-vscode-theme-kind', 'style'] });
       themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-vscode-theme-kind'] });
+    }
+
+    // Lightweight payload fingerprint (length + djb2 over JSON) to detect unchanged polls.
+    let lastPayloadSig = null;
+    function payloadSignature(data) {
+      const s = JSON.stringify(data, (k, v) => (k === 'fetched_at' ? undefined : v));
+      let h = 5381;
+      for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
+      return s.length + ':' + h;
     }
 
     let currentData = null;
@@ -5563,7 +5571,12 @@
       if (message.command === 'loadStats') {
         showLoading(false);
         document.getElementById('error-banner').style.display = 'none';
-        renderUI(message.data);
+        // Skip the full re-render when the payload is unchanged (typical 30s poll).
+        const sig = payloadSignature(message.data);
+        if (sig !== lastPayloadSig) {
+          lastPayloadSig = sig;
+          renderUI(message.data);
+        }
         const freshnessEl = document.getElementById('data-freshness-note');
         if (freshnessEl) freshnessEl.textContent = (message.data.is_demo ? 'DEMO sample data · ' : 'Tokens: exact local counts · ') + 'updated ' + new Date().toLocaleTimeString();
 
@@ -5618,6 +5631,7 @@
 
     // Live countdown ticker: ticks the quota timer every second between data loads.
     setInterval(() => {
+      if (document.hidden) return;
       const t = document.getElementById('quota-timer-text');
       const iso = window.__quotaResetIso;
       if (!t || !iso) return;
