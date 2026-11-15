@@ -4090,6 +4090,12 @@
         .replace(/'/g, '&#039;');
     }
 
+    // Surface names end up in a class attribute: allow only the known values.
+    function surfaceClass(surface) {
+      const v = String(surface || 'ide').toLowerCase();
+      return (v === 'ide' || v === 'cli' || v === 'core') ? v : 'ide';
+    }
+
     function formatNumber(num) {
       if (num == null) return '0';
       if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
@@ -5153,7 +5159,7 @@
         tr.innerHTML = `
           <td class="mono" style="color:var(--text-muted);">${escapeHtml(s.date)}</td>
           <td>
-            <span class="surface-badge surface-${(s.surface || 'ide').toLowerCase()}">${escapeHtml(s.surface || 'IDE')}</span>
+            <span class="surface-badge surface-${surfaceClass(s.surface)}">${escapeHtml(s.surface || 'IDE')}</span>
             <span class="mono project-tag">${escapeHtml(s.project || 'General')}</span>
           </td>
           <td class="session-title-cell" title="${escapeHtml(s.title || 'Session ' + shortId)}">
@@ -5162,7 +5168,7 @@
             <button class="btn-copy" data-id="${escapeHtml(s.convo_id)}" title="Copy Conversation ID">📋</button>
           </td>
           <td class="col-hide-narrow" style="color:var(--text-muted); font-size:11px;">${escapeHtml(s.model)}</td>
-          <td class="col-hide-narrow mono">${s.turn_count}</td>
+          <td class="col-hide-narrow mono">${Number(s.turn_count) || 0}</td>
           <td class="col-hide-narrow mono" style="color:var(--text-muted);">${formatDuration(s.duration_sec)}</td>
           <td class="col-hide-narrow mono table-cell-input">${formatNumber(s.input_tokens)}</td>
           <td class="col-hide-narrow mono table-cell-cached">${formatNumber(s.cached_tokens)}</td>
@@ -5211,7 +5217,7 @@
       selectedSession = s;
       const projectEl = document.getElementById('d-project');
       if (projectEl) {
-        projectEl.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> <span class="surface-badge surface-${(s.surface || 'ide').toLowerCase()}">${escapeHtml(s.surface || 'IDE')}</span> ${escapeHtml(s.project || 'General')}`;
+        projectEl.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> <span class="surface-badge surface-${surfaceClass(s.surface)}">${escapeHtml(s.surface || 'IDE')}</span> ${escapeHtml(s.project || 'General')}`;
       }
 
       document.getElementById('d-title').textContent = s.title || ('Session ' + s.convo_id.slice(0, 8));
