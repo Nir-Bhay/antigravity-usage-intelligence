@@ -20,6 +20,10 @@ CACHE_FILE = os.path.join(os.path.expanduser("~"), ".gemini", "antigravity", "an
 
 GEMINI_HOME = os.path.join(os.path.expanduser("~"), ".gemini")
 
+# Version of the session parsing logic. Cached sessions written by a different
+# version are re-parsed, so mapping changes reach sessions that are already cached.
+PARSER_VERSION = 1
+
 DATA_SOURCES = [
     {"name": "IDE", "root": os.path.join(GEMINI_HOME, "antigravity-ide")},
     {"name": "Core", "root": os.path.join(GEMINI_HOME, "antigravity")},
@@ -46,6 +50,15 @@ def normalize_model_name(raw):
     if 'claude' in r and 'haiku' in r:
         return 'Claude Haiku 4.5'
 
+    # Gemini 4.x models (Antigravity 2.x), e.g. gemini-4-argon-low, gemini-4-hydrogen-medium.
+    # Only the codename is known, so it is shown as-is with the tier in parentheses.
+    m4 = re.search(r'gemini-4-([a-z]+)(?:-([a-z0-9.\-]+))?', r)
+    if m4:
+        label = f"Gemini 4 {m4.group(1).capitalize()}"
+        return f"{label} ({m4.group(2)})" if m4.group(2) else label
+    if r.startswith('gemini-4'):
+        return raw.strip()
+
     # Gemini 3.x models
     if '3.8-flash' in r or '3.8' in r:
         return 'Gemini 3.8 Flash'
@@ -63,6 +76,9 @@ def normalize_model_name(raw):
         return 'Gemini Pro Agent'
     if 'gemini-flash' in r:
         return 'Gemini 3 Flash'
+    # Unknown but well-formed slug: show it instead of dropping the model.
+    if (r.startswith('gemini-') or r.startswith('claude-')) and re.search(r'\d', r):
+        return raw.strip()
 
     return None
 
@@ -324,6 +340,7 @@ def parse_session_db(db_path, surface="IDE", brain_dir=None):
     tool_counts = defaultdict(int)
     tool_errors = 0
     first_prompt = ""
+    transcript_models = []
     
     if transcript_path and os.path.exists(transcript_path):
         try:
@@ -333,6 +350,10 @@ def parse_session_db(db_path, surface="IDE", brain_dir=None):
                         step = json.loads(line)
                         stype = step.get("type", "")
                         status = step.get("status", "")
+                        if stype == "PLANNER_RESPONSE" and step.get("model"):
+                            norm_tm = normalize_model_name(step.get("model"))
+                            if norm_tm:
+                                transcript_models.append(norm_tm)
                         if stype == "USER_INPUT" and not first_prompt:
                             raw_p = step.get("content", "")
                             clean_p = re.sub(r'<[^>]+>', ' ', raw_p).strip()
@@ -348,6 +369,10 @@ def parse_session_db(db_path, surface="IDE", brain_dir=None):
                             tool_errors += 1
                     except Exception:
                         pass
+            # The transcript records the model of every planner response, which is more
+            # reliable than slugs scraped from binary metadata. Prefer the latest one.
+            if transcript_models:
+                model_name = transcript_models[-1]
         except Exception:
             pass
 
@@ -381,7 +406,8 @@ def parse_session_db(db_path, surface="IDE", brain_dir=None):
         "thinking_tokens": total_thinking,
         "total_tokens": total_input + total_cached + total_output,
         "tool_counts": dict(tool_counts),
-        "tool_errors": tool_errors
+        "tool_errors": tool_errors,
+        "parser_version": PARSER_VERSION
     }
 
 def sync_all_sessions(force=False):
@@ -416,13 +442,15 @@ def sync_all_sessions(force=False):
                 mtime = os.path.getmtime(db_path)
                 
                 # Check cache validity
-                # Re-parse if: mtime changed, model name is legacy/deprecated, OR
+                # Re-parse if: mtime changed, parser version differs, model name is legacy/deprecated, OR
                 # the cached date doesn't match what the current mtime implies
                 # (catches sessions that were created on one day and are still active today)
                 cached_entry = cached_sessions.get(convo_id)
                 if cached_entry and cached_entry.get("mtime") == mtime and cached_entry.get("surface"):
                     old_m = cached_entry.get("model", "")
-                    if any(dep in old_m for dep in ["1.5", "2.5", "ID:", "Thinking Exp", "Flash 8B"]):
+                    if cached_entry.get("parser_version") != PARSER_VERSION:
+                        pass  # re-parse: entry written by a different parser version
+                    elif any(dep in old_m for dep in ["1.5", "2.5", "ID:", "Thinking Exp", "Flash 8B"]):
                         pass  # re-parse for model name fix
                     elif cached_entry.get("date") != datetime.fromtimestamp(mtime).strftime('%Y-%m-%d'):
                         pass  # re-parse: session crossed midnight since last cache write
