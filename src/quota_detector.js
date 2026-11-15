@@ -266,8 +266,7 @@ async function getLiveQuota(forceRefresh = false) {
   // Scan failed: serve last-known data explicitly marked stale
   // so the dashboard never mistakes it for a fresh reading.
   if (cachedQuota) {
-    cachedQuota.stale = true;
-    return cachedQuota;
+    return { ...cachedQuota, stale: true };
   }
   return null;
 }

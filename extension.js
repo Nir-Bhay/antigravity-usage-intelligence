@@ -475,12 +475,16 @@ function activate(context) {
   // 5. Register Export Command
   context.subscriptions.push(
     vscode.commands.registerCommand('antigravity-stats.exportReport', async () => {
-      const data = await fetchStatsData();
-      const doc = await vscode.workspace.openTextDocument({
-        content: JSON.stringify(data, null, 2),
-        language: 'json'
-      });
-      await vscode.window.showTextDocument(doc);
+      try {
+        const data = await fetchStatsData();
+        const doc = await vscode.workspace.openTextDocument({
+          content: JSON.stringify(data, null, 2),
+          language: 'json'
+        });
+        await vscode.window.showTextDocument(doc);
+      } catch (err) {
+        vscode.window.showErrorMessage(`Antigravity Stats export failed: ${err.message}`);
+      }
     })
   );
 

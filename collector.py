@@ -397,7 +397,9 @@ def sync_all_sessions(force=False):
     cached_sessions = cache.get("sessions", {})
     updated = False
     found_any_source = False
-    
+    seen_ids = set()
+    scanned_surfaces = set()
+
     for src in DATA_SOURCES:
         root = src["root"]
         surface = src["name"]
@@ -406,13 +408,15 @@ def sync_all_sessions(force=False):
         if not os.path.exists(convos_dir):
             continue
         found_any_source = True
+        scanned_surfaces.add(surface)
 
         db_files = glob.glob(os.path.join(convos_dir, "*.db"))
         for db_path in db_files:
+            convo_id = os.path.splitext(os.path.basename(db_path))[0]
+            seen_ids.add(convo_id)
             try:
                 if not os.path.exists(db_path) or os.path.getsize(db_path) == 0:
                     continue
-                convo_id = os.path.splitext(os.path.basename(db_path))[0]
                 mtime = os.path.getmtime(db_path)
                 
                 # Check cache validity
@@ -436,7 +440,14 @@ def sync_all_sessions(force=False):
                     updated = True
             except Exception as e:
                 sys.stderr.write(f"Warning: skipped {db_path}: {e}\n")
-            
+
+    # Prune cached sessions whose .db no longer exists (only for surfaces that were actually scanned)
+    for cid in list(cached_sessions):
+        entry = cached_sessions[cid]
+        if cid not in seen_ids and entry.get("surface") in scanned_surfaces:
+            del cached_sessions[cid]
+            updated = True
+
     if updated or (not os.path.exists(CACHE_FILE) and found_any_source):
         cache["sessions"] = cached_sessions
         cache["last_sync"] = int(datetime.now().timestamp())
